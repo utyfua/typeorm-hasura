@@ -1,0 +1,28 @@
+{
+  "name": "typeorm-hasura",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "typeorm": "typeorm-ts-node-esm",
+    "test:gen": "npx env-cmd npx typeorm-ts-node-esm migration:generate ./test/migration/next -d ./test/data-source",
+    "test:up": "npx env-cmd npx typeorm-ts-node-esm  migration:run -d ./test/data-source",
+    "test:down": "npx env-cmd npx typeorm-ts-node-esm  migration:revert -d ./test/data-source",
+    "test:start": "npx env-cmd ts-node test/index.ts",
+    "test:run": "npx env-cmd ts-node test/hasura.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.12"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.0",
+    "env-cmd": "^10.1.0",
+    "pg": "^8.10.0",
+    "ts-node": "^10.9.1"
+  }
+}

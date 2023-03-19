@@ -1,0 +1,13 @@
+node_modules/
+package-lock.json
+
+.idea/
+.vscode/
+
+build/
+tmp/
+temp/
+
+.env
+.env.js
+.env.json
