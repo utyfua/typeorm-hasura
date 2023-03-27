@@ -4,8 +4,9 @@ import { writeFile, mkdir } from "fs/promises"
 
 AppDataSource.initialize().then(async () => {
     const metadata = generateHasuraMetadata({
-        name: "hasura_zero",
-        dataSource: AppDataSource
+        name: "public",
+        dataSource: AppDataSource,
+        databaseUrl: process.env.HASURA_DATABASE_URL
     })
 
     await mkdir("tmp/output", { recursive: true })

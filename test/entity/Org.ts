@@ -9,7 +9,7 @@ import { Product } from './Product';
 import { User } from './User';
 
 
-@Entity({ schema: 'hasura_zero', name: 'Org' })
+@Entity({ schema: 'public', name: 'Org' })
 export class Org extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;

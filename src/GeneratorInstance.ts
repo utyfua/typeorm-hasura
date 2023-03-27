@@ -5,6 +5,12 @@ export interface CustomDataSourceOptions {
     name: string;
     dataSource: TypeORM.DataSource;
     customization?: Hasura.SourceCustomization;
+    /**
+     * override database url instead of url from data source
+     *
+     * @example `postgres://username:password@host:5432/database`
+     */
+    databaseUrl?: string
 }
 
 function getHasuraKind(type: TypeORM.DataSourceOptions["type"]): Hasura.Source["kind"] {
@@ -41,18 +47,11 @@ export class TypeormHasuraMetadataGenerator {
         if (typeof options.password !== 'string') {
             throw new Error(`Does not support password as a function.`);
         }
-        return {
-            username: options.username,
-            password: options.password,
-            database: options.database,
-            host: options.host,
-            port: options.port?.toString(),
-        }
+        return `postgres://${options.username}:${options.password}@${options.host}:${options.port}/${options.database}`
     }
 
     generateSource(options: CustomDataSourceOptions): Hasura.Source {
         console.log(options);
-
         return {
             name: options.name,
             kind: getHasuraKind(options.dataSource.options.type),
@@ -60,7 +59,7 @@ export class TypeormHasuraMetadataGenerator {
             customization: options.customization,
             configuration: {
                 "connection_info": {
-                    "database_url": this.getDatabaseUrl(options.dataSource),
+                    "database_url": options.databaseUrl || this.getDatabaseUrl(options.dataSource),
                     "isolation_level": "read-committed",
                     "use_prepared_statements": false
                 },
