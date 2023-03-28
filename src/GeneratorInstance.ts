@@ -1,123 +1,63 @@
-import * as TypeORM from "typeorm";
+import { CustomDataSourceOptions } from "./types";
 import * as Hasura from "./MetadataV3";
-
-export interface CustomDataSourceOptions {
-    name: string;
-    dataSource: TypeORM.DataSource;
-    customization?: Hasura.SourceCustomization;
-    /**
-     * override database url instead of url from data source
-     *
-     * @example `postgres://username:password@host:5432/database`
-     */
-    databaseUrl?: string
-}
-
-function getHasuraKind(type: TypeORM.DataSourceOptions["type"]): Hasura.Source["kind"] {
-    switch (type) {
-        case "postgres":
-            return "postgres";
-        default:
-            throw new Error(`Unsupported data source type ${type}.`);
-    }
-}
+import { generateSource } from "./mappers";
 
 export class TypeormHasuraMetadataGenerator {
-    dataSources: CustomDataSourceOptions[];
-    constructor(dataSources: CustomDataSourceOptions[]) {
-        this.dataSources = dataSources;
+    private _metadata: Hasura.Metadata;
 
-        // check all dataSources are initialized otherwise throw error
-        dataSources.forEach(dataSource => {
-            if (!dataSource.dataSource.isInitialized) {
-                throw new Error(`Data source ${dataSource.name} is not initialized`);
-            }
-        });
-    }
+    constructor() {
+        this._metadata = {
+            resource_version: 0,
+            metadata: {
+                version: 3,
+                sources: []
+                // backend_configs?: BackendConfigs;
+                // remote_schemas?: RemoteSchema[];
+                // actions?: Action[];
+                // query_collections?: QueryCollection[];
+                // allowlist?: AllowList[];
+                // inherited_roles?: InheritedRole[];
+                // custom_types?: CustomTypes;
+                // cron_triggers?: CronTrigger[];
+                // network?: Network;
+                // rest_endpoints?: RestEndpoint[];
+                // api_limits?: ApiLimits;
+                // graphql_schema_introspection?: GraphQLSchemaIntrospection;
 
-    getDatabaseUrl(dataSource: TypeORM.DataSource): Hasura.PostgresConfiguration['connection_info']['database_url'] {
-        const { options } = dataSource;
-        // check for postgres
-        if (options.type !== "postgres") {
-            throw new Error(`Unsupported data source type ${options.type}.`);
-        }
-        if ('url' in options) {
-            return options.url
-        }
-        if (typeof options.password !== 'string') {
-            throw new Error(`Does not support password as a function.`);
-        }
-        return `postgres://${options.username}:${options.password}@${options.host}:${options.port}/${options.database}`
-    }
-
-    generateSource(options: CustomDataSourceOptions): Hasura.Source {
-        console.log(options);
-        return {
-            name: options.name,
-            kind: getHasuraKind(options.dataSource.options.type),
-            tables: [...options.dataSource.entityMetadatas].reverse().map(metadata => this.generateTable(metadata)),
-            customization: options.customization,
-            configuration: {
-                "connection_info": {
-                    "database_url": options.databaseUrl || this.getDatabaseUrl(options.dataSource),
-                    "isolation_level": "read-committed",
-                    "use_prepared_statements": false
-                },
-                "extensions_schema": "extensions_schema_test"
+                /**
+                 * The EE Lite OpenTelemetry settings.
+                 *
+                 * ATTENTION: Both Lux and the EE Lite server allow configuring OpenTelemetry. Anyway, this only
+                 * represents the EE Lite one since Lux stores the OpenTelemetry settings by itself.
+                 */
+                // opentelemetry?: OpenTelemetry;
             }
         }
     }
 
-    generateTable(table: TypeORM.EntityMetadata): Hasura.MetadataTable {
-        console.log(table);
-        return {
-            table: {
-                name: table.tableName,
-                schema: table.schema,
-            },
-            object_relationships: [],
-            array_relationships: [],
-            insert_permissions: [],
-            select_permissions: [],
-            update_permissions: [],
-            delete_permissions: [],
-        }
+    /**
+     * Adds a source to the metadata.
+     */
+    addSource(sourceOptions: CustomDataSourceOptions) {
+        const source = generateSource(sourceOptions);
+        this._metadata.metadata.sources.push(source)
+        return this;
     }
 
-}
-
-export function generateHasuraMetadata(typeormSources: CustomDataSourceOptions[] | CustomDataSourceOptions): Hasura.Metadata {
-    if (!Array.isArray(typeormSources)) {
-        typeormSources = [typeormSources];
+    /**
+     * Adds multiple sources to the metadata.
+     */
+    addSources(sourceOptions: CustomDataSourceOptions[]) {
+        sourceOptions.forEach(sourceOptions => this.addSource(sourceOptions));
+        return this;
     }
 
-    const generator = new TypeormHasuraMetadataGenerator(typeormSources);
-
-    return {
-        resource_version: 0,
-        metadata: {
-            version: 3,
-            sources: typeormSources.map(typeormSources => generator.generateSource(typeormSources))
-            // backend_configs?: BackendConfigs;
-            // remote_schemas?: RemoteSchema[];
-            // actions?: Action[];
-            // query_collections?: QueryCollection[];
-            // allowlist?: AllowList[];
-            // inherited_roles?: InheritedRole[];
-            // custom_types?: CustomTypes;
-            // cron_triggers?: CronTrigger[];
-            // network?: Network;
-            // rest_endpoints?: RestEndpoint[];
-            // api_limits?: ApiLimits;
-            // graphql_schema_introspection?: GraphQLSchemaIntrospection;
-
-            /**
-             * The EE Lite OpenTelemetry settings.
-             *
-             * ATTENTION: Both Lux and the EE Lite server allow configuring OpenTelemetry. Anyway, this only
-             * represents the EE Lite one since Lux stores the OpenTelemetry settings by itself.
-             */
-            // opentelemetry?: OpenTelemetry;
-        }
+    /**
+     * Returns the metadata.
+     * 
+     * @note This method is not async because we might need to do some async stuff in the future.
+     */
+    getMetadata(): Hasura.Metadata | Promise<Hasura.Metadata> {
+        return this._metadata;
     }
 }

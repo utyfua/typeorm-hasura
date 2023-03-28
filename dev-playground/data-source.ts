@@ -2,10 +2,11 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 import * as entities from "./entity"
 
-const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_SCHEMA } = process.env
+const { DB_URL, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_SCHEMA } = process.env
 
 export const AppDataSource = new DataSource({
     type: "postgres",
+    url: DB_URL,
     host: DB_HOST,
     port: Number(DB_PORT),
     username: DB_USERNAME,
