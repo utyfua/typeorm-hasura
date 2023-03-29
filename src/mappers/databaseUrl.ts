@@ -9,7 +9,7 @@ export function getDatabaseUrl({ dataSource, databaseUrl }: CustomDataSourceOpti
     if (options.type !== "postgres") {
         throw new Error(`Unsupported data source type ${options.type}.`);
     }
-    if ('url' in options) {
+    if (options.url) {
         return options.url
     }
     if (typeof options.password !== 'string') {

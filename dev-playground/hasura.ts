@@ -17,8 +17,14 @@ async function convert() {
         `tmp/output/metadata-${Date.now()}.json`,
         JSON.stringify(metadata, null, 2)
     )
+    AppDataSource.close();
     console.log("Done and done");
 }
 
-convert()
+AppDataSource.initialize()
+    .then(convert)
     .catch(error => console.log(error))
+
+if (process.env.DEV_KEEP_ALIVE) {
+    setInterval(() => 1, 1000 * 60 * 60)
+}

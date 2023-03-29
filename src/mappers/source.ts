@@ -5,7 +5,6 @@ import { getDatabaseUrl } from "./databaseUrl";
 import { generateTable } from "./table";
 
 export function generateSource(options: CustomDataSourceOptions): Hasura.Source {
-    console.log(options);
     return {
         name: options.name,
         kind: getHasuraKind(options.dataSource.options.type),

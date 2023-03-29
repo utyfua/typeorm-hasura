@@ -12,14 +12,14 @@ import { User } from './User';
 @Entity({ schema: 'public', name: 'Org' })
 export class Org extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id!: string;
 
     @Column({ type: 'text', nullable: true })
-    name: string;
+    name!: string;
 
     @OneToMany(() => User, (user) => user.org)
-    users: User[];
+    users!: User[];
 
     @OneToMany(() => Product, (product) => product.org)
-    products: Product[];
+    products!: Product[];
 }
