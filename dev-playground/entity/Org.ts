@@ -11,15 +11,36 @@ import { User } from './User';
 
 
 @Entity({ schema: 'public', name: 'Org' })
-@HasuraEntity({
+@HasuraEntity<Org>({
     customName: 'org',
+    permissions: {
+        user: {
+            where: {
+                users: {
+                    id: 'X-Hasura-User-Id'
+                }
+            },
+            select: true,
+            insert: true,
+        }
+    },
 })
 export class Org extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
+    @HasuraColumn({
+        permissions: {
+            user: ['select']
+        }
+    })
     id!: string;
 
     @Column({ type: 'text', nullable: true })
-    @HasuraColumn({ customName: 'myOrgName' })
+    @HasuraColumn({
+        customName: 'myOrgName',
+        permissions: {
+            user: ['select', 'update']
+        }
+    })
     name!: string;
 
     @OneToMany(() => User, (user) => user.org)

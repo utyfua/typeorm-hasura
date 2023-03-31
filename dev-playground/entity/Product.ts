@@ -5,23 +5,57 @@ import {
     JoinColumn,
     BaseEntity
 } from 'typeorm';
-import { HasuraEntity } from '../../src';
+import { HasuraColumn, HasuraEntity } from '../../src';
 import { User } from './User';
 import { Org } from "./Org";
 
 
 @Entity({ schema: 'public', name: 'Product' })
-@HasuraEntity({
+@HasuraEntity<Product>({
     customName: 'product',
+    permissions: {
+        user: {
+            where: [
+                { userId: 'X-Hasura-User-Id' },
+                {
+                    org: {
+                        users: {
+                            id: 'X-Hasura-User-Id'
+                        }
+                    }
+                }
+            ],
+            select: true,
+            insert: true,
+        }
+    }
 })
 export class Product extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
+    @HasuraColumn({
+        customName: 'myOrgName',
+        permissions: {
+            user: ['select']
+        }
+    })
     id!: string;
 
     @Column({ type: 'text', nullable: true })
+    @HasuraColumn({
+        customName: 'myOrgName',
+        permissions: {
+            user: ['select', 'update']
+        }
+    })
     name!: string;
 
     @Column({ name: 'orgId', type: 'uuid', nullable: true })
+    @HasuraColumn({
+        customName: 'myOrgName',
+        permissions: {
+            user: ['select']
+        }
+    })
     orgId!: string;
 
     @ManyToOne(() => Org, (org) => org.products)
@@ -29,6 +63,12 @@ export class Product extends BaseEntity {
     org!: Org;
 
     @Column({ name: 'userId', type: 'uuid', nullable: true })
+    @HasuraColumn({
+        customName: 'myOrgName',
+        permissions: {
+            user: ['select']
+        }
+    })
     userId!: string;
 
     @ManyToOne(() => User, (user) => user.products)
