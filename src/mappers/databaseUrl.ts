@@ -1,7 +1,7 @@
-import { CustomDataSourceOptions } from "../types";
+import { DataSourceOptions } from "../types";
 
 // currently hasura does not support object in database url
-export function getDatabaseUrl({ dataSource, databaseUrl }: CustomDataSourceOptions): string {
+export function getDatabaseUrl({ dataSource, databaseUrl }: DataSourceOptions): string {
     if (databaseUrl) return databaseUrl;
 
     const { options } = dataSource;

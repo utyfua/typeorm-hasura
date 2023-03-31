@@ -1,4 +1,4 @@
-import { CustomDataSourceOptions } from "./types";
+import { DataSourceOptions } from "./types";
 import * as Hasura from "./MetadataV3";
 import { generateSource } from "./mappers";
 
@@ -38,7 +38,7 @@ export class TypeormHasuraMetadataGenerator {
     /**
      * Adds a source to the metadata.
      */
-    addSource(sourceOptions: CustomDataSourceOptions) {
+    addSource(sourceOptions: DataSourceOptions) {
         const source = generateSource(sourceOptions);
         this._metadata.metadata.sources.push(source)
         return this;
@@ -47,7 +47,7 @@ export class TypeormHasuraMetadataGenerator {
     /**
      * Adds multiple sources to the metadata.
      */
-    addSources(sourceOptions: CustomDataSourceOptions[]) {
+    addSources(sourceOptions: DataSourceOptions[]) {
         sourceOptions.forEach(sourceOptions => this.addSource(sourceOptions));
         return this;
     }

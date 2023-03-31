@@ -5,11 +5,15 @@ import {
     JoinColumn,
     BaseEntity
 } from 'typeorm';
+import { HasuraEntity } from '../../src';
 import { User } from './User';
 import { Org } from "./Org";
 
 
 @Entity({ schema: 'public', name: 'Product' })
+@HasuraEntity({
+    customName: 'product',
+})
 export class Product extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
