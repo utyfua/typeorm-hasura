@@ -18,7 +18,7 @@ import { Product } from './Product';
     permissions: {
         user: {
             select: true,
-            insert: {
+            update: {
                 where: {
                     id: 'X-Hasura-User-Id'
                 }

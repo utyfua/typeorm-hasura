@@ -1,4 +1,6 @@
 import { UserActionType, UserRole } from "./base";
+import { EntityTarget } from "./Entity";
+
 
 export interface ColumnOptions {
     /**
@@ -12,4 +14,10 @@ export interface ColumnOptions {
     permissions?: {
         [role: UserRole]: UserActionType[] | UserActionType | boolean
     }
+}
+
+export interface ColumnMetadata {
+    object: EntityTarget,
+    propertyName: string,
+    options: ColumnOptions | undefined,
 }

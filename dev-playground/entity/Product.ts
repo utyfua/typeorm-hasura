@@ -26,14 +26,13 @@ import { Org } from "./Org";
                 }
             ],
             select: true,
-            insert: true,
+            update: true,
         }
     }
 })
 export class Product extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @HasuraColumn({
-        customName: 'myOrgName',
         permissions: {
             user: ['select']
         }
@@ -42,7 +41,6 @@ export class Product extends BaseEntity {
 
     @Column({ type: 'text', nullable: true })
     @HasuraColumn({
-        customName: 'myOrgName',
         permissions: {
             user: ['select', 'update']
         }
@@ -51,7 +49,6 @@ export class Product extends BaseEntity {
 
     @Column({ name: 'orgId', type: 'uuid', nullable: true })
     @HasuraColumn({
-        customName: 'myOrgName',
         permissions: {
             user: ['select']
         }
@@ -64,7 +61,6 @@ export class Product extends BaseEntity {
 
     @Column({ name: 'userId', type: 'uuid', nullable: true })
     @HasuraColumn({
-        customName: 'myOrgName',
         permissions: {
             user: ['select']
         }

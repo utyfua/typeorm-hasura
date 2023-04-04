@@ -21,7 +21,7 @@ import { User } from './User';
                 }
             },
             select: true,
-            insert: true,
+            update: true,
         }
     },
 })
@@ -36,7 +36,7 @@ export class Org extends BaseEntity {
 
     @Column({ type: 'text', nullable: true })
     @HasuraColumn({
-        customName: 'myOrgName',
+        // customName: 'myOrgName',
         permissions: {
             user: ['select', 'update']
         }

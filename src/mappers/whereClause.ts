@@ -1,15 +1,25 @@
-import { FindOptionsWhere, InstanceChecker } from "typeorm";
+import { FindOptionsWhere, InstanceChecker, And } from "typeorm";
 import { Where, Filter, Operators, } from "../types";
 
-export function convertWhereClause<Entity extends Object>(input: Where<Entity>): Filter<keyof Entity> {
-    if (Array.isArray(input)) {
-        return { _or: input.map(i => parseParameters(i)) }
+export function convertWhereClause<Entity extends Object>(...wheres: (Where<Entity> | undefined)[]): Filter<Entity> {
+    wheres = wheres.filter(Boolean)
+    if (!wheres.length) return {}
+    if (wheres.length > 1) {
+        return {
+            _and: wheres.map(where => convertWhereClause(where))
+        }
     }
-    return parseParameters(input)
+    const [where] = wheres
+
+    if (!where) return {}
+    if (Array.isArray(where)) {
+        return { _or: where.map(i => parseParameters(i)) }
+    }
+    return parseParameters(where)
 }
 
-function parseParameters<Entity extends Object>(object: FindOptionsWhere<Entity>): Filter<keyof Entity> {
-    let conditions: Filter<keyof Entity>[] = []
+function parseParameters<Entity extends Object>(object: FindOptionsWhere<Entity>): Filter<Entity> {
+    let conditions: Filter<Entity>[] = []
     for (let key in object) {
         const parameterValue = object[key]
         if (InstanceChecker.isFindOperator(parameterValue)) {
@@ -20,6 +30,8 @@ function parseParameters<Entity extends Object>(object: FindOptionsWhere<Entity>
                 throw new Error("this operator is not supported in this time");
         } else if (["string", "number", "boolean"].includes(typeof parameterValue)) {
             conditions.push({ [key]: { "_eq": parameterValue } })
+        } else if (typeof parameterValue === "object" && !Array.isArray(parameterValue) && parameterValue !== null) {
+            conditions.push({ [key]: parseParameters(parameterValue) })
         } else
             throw new Error("this parameter is not supported in this time");
     }

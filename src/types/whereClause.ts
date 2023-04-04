@@ -1,4 +1,4 @@
-import { FindOptionsWhere, FindOperatorType } from "typeorm";
+import { FindOptionsWhere, FindOperatorType, BaseEntity } from "typeorm";
 
 export type Where<Entity> = FindOptionsWhere<Entity>[] | FindOptionsWhere<Entity>
 
@@ -40,16 +40,17 @@ type ExclusiveParameters = ExclusiveKeys<
     { [key in ArrayParameters]?: string[] } &
     { [key in NullParameters]?: boolean }
 >
+type Subject<Entity extends Object> = {
+    [key in keyof Entity]?: ExclusiveParameters
+}
+export type ExclusiveArguments<Entity extends Object, T = {}, EntityParameters extends string | number | symbol = keyof Omit<Entity, keyof BaseEntity>> =
+    ExclusiveKeys<{ [key in EntityParameters]?: ExclusiveParameters | Subject<Entity> } & T>
 
-export type ExclusiveArguments<EntityParameters extends string | number | symbol, T = {}> =
-    ExclusiveKeys<{ [key in EntityParameters]?: ExclusiveParameters } & T>
-
-export type Filter<EntityParameters extends string | number | symbol> = ExclusiveKeys<{
+export type Filter<EntityParameters extends Object> = ExclusiveKeys<{
     _and?: Filter<EntityParameters>[];
     _or?: Filter<EntityParameters>[];
     _not?: Filter<EntityParameters>
 }> | ExclusiveArguments<EntityParameters>
-
 
 export const Operators: Readonly<
     Partial<Record<FindOperatorType, StringParameters | ArrayParameters>>
@@ -65,13 +66,10 @@ export const Operators: Readonly<
     "ilike": "_ilike",
     // array
     "in": "_in",
-
 }
 enum NullParams {
     "isNull" = "_is_null"
 }
-
-// "and" !!!!
 
 // all typeorm operators FindOperatorType
 

@@ -3,6 +3,7 @@ import * as Hasura from "../MetadataV3";
 import { generateRelationships } from "./relationships";
 import { generateTableConfiguration } from "./tableConfiguration";
 import { DataSourceOptions } from "../types";
+import { generatePermissions } from "./permissions";
 
 export function generateTable(
     dataSourceOptions: DataSourceOptions,
@@ -17,9 +18,6 @@ export function generateTable(
         },
         configuration: generateTableConfiguration(table),
         ...generateRelationships(table.relations),
-        insert_permissions: [],
-        select_permissions: [],
-        update_permissions: [],
-        delete_permissions: [],
+        ...generatePermissions(table)
     }
 }

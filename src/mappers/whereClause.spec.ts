@@ -4,10 +4,9 @@ import { convertWhereClause } from "./whereClause"
 import { User, Org, Product } from "../../dev-playground/entity";
 import { Where, Filter } from "../types";
 
-type EntityParameters = keyof Omit<User, keyof BaseEntity>
 type Case<T extends BaseEntity> = {
     input: Where<T>;
-    output: Filter<EntityParameters>
+    output: Filter<T>
 }
 
 const cases: Case<User>[] = [
@@ -65,6 +64,18 @@ const cases: Case<User>[] = [
 
         },
     },
+    {
+        input: {
+            products: {
+                id: "1"
+            }
+        },
+        output: {
+            products: {
+                id: { _eq: "1" },
+            }
+        }
+    }
 ]
 
 describe("convert whereTypeorm to hasuraObj", () => {

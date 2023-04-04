@@ -1,5 +1,4 @@
-import { Where } from "./whereClause";
-
+import { Where, Filter } from "./whereClause";
 export interface BasePermissionRule<Entity extends Object> {
     where?: Where<Entity>;
 }
