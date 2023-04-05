@@ -1,16 +1,17 @@
 import * as TypeORM from "typeorm";
 import * as Hasura from "../MetadataV3";
-import { internalStorage } from "../internalStorage";
+import { ColumnMetadata, EntityOptions, EntityRootField } from "../types";
+import snakeCase = require("lodash.snakecase");
 
-export function generateTableConfiguration(table: TypeORM.EntityMetadata): Hasura.MetadataTableConfig {
-    const tableConfig = internalStorage.getEntityOptions(table.target);
-    const columnConfigList = internalStorage.getEntityColumnsOptionsList(table.target);
+export function generateTableConfiguration<Entity extends Object>(table: TypeORM.EntityMetadata,
+    entityOptions: EntityOptions<Entity> | undefined,
+    columnMetadata: ColumnMetadata[]
+): Hasura.MetadataTableConfig {
 
-    let custom_name: string | undefined = tableConfig && tableConfig.customName || table.tableName;
-    if (custom_name === table.tableName) custom_name = undefined;
+    let custom_name: string | undefined = entityOptions && entityOptions.customName || table.tableName;
 
     const columnHasuraEntries: [string, Hasura.MetadataTableColumnConfig][] = [];
-    for (const column of columnConfigList) {
+    for (const column of columnMetadata) {
         // looks like its only possible to set custom_name for columns here
         if (column.options?.customName) {
             columnHasuraEntries.push([column.propertyName, {
@@ -20,8 +21,25 @@ export function generateTableConfiguration(table: TypeORM.EntityMetadata): Hasur
     }
     const column_config = columnHasuraEntries.length ? Object.fromEntries(columnHasuraEntries) : undefined;
 
+    const custom_root_fields: Record<string, EntityRootField> = {};
+    if (entityOptions?.customRootFields) {
+        // iterate over all possible root fields and push them to custom_root_fields
+        for (const rootField in entityOptions.customRootFields) {
+            let rootFieldConfig = entityOptions.customRootFields[rootField as keyof typeof entityOptions.customRootFields];
+            if (rootFieldConfig) {
+                if (typeof rootFieldConfig === 'string') {
+                    rootFieldConfig = {
+                        name: rootFieldConfig,
+                    };
+                }
+                custom_root_fields[snakeCase(rootField)] = rootFieldConfig;
+            }
+        }
+    }
+
     return {
         custom_name,
         column_config,
+        custom_root_fields,
     }
 }

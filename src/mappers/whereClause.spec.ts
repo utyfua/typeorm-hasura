@@ -82,5 +82,4 @@ describe("convert whereTypeorm to hasuraObj", () => {
     cases.forEach(({ input, output }) =>
         it("input to Equal output", () => expect(convertWhereClause(input)).toEqual(output))
     )
-
 })

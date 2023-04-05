@@ -1,14 +1,19 @@
-import { TypeormHasuraMetadataGenerator } from "../src"
+import { MetadataBuilder } from "../src";
+import { currencyConverterAction } from "./action/currencyConverter";
 import { AppDataSource } from "./data-source"
 import { writeFile, mkdir } from "fs/promises"
 
 async function convert() {
-    const metadata = await new TypeormHasuraMetadataGenerator()
+    const metadata = await new MetadataBuilder()
         .addSource({
             name: "public",
             dataSource: AppDataSource,
-            databaseUrl: process.env.HASURA_DATABASE_URL
+            databaseUrl: process.env.HASURA_DATABASE_URL,
+            defaultSelectPermissionLimit: 50,
         })
+        .addActions([
+            currencyConverterAction,
+        ])
         .getMetadata()
 
     await mkdir("tmp/output", { recursive: true })

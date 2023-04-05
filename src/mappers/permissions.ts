@@ -1,7 +1,5 @@
-import * as TypeORM from "typeorm";
-import { internalStorage } from "../internalStorage";
 import { MetadataTable } from "../MetadataV3";
-import { ColumnMetadata, UserActionType, Where, } from "../types";
+import { ColumnMetadata, DataSourceOptions, EntityOptions, UserActionType } from "../types";
 import { convertWhereClause } from "./whereClause"
 export type PermissionResult = Required<Pick<
     MetadataTable,
@@ -9,10 +7,10 @@ export type PermissionResult = Required<Pick<
 >>
 
 export function generatePermissions<Entity extends Object = Object>(
-    table: TypeORM.EntityMetadata,
+    dataSourceOptions: DataSourceOptions,
+    entityOptions: EntityOptions<Entity> | undefined,
+    columnMetadata: ColumnMetadata[]
 ): PermissionResult {
-    const entityOptions = internalStorage.getEntityOptions<Entity>(table.target);
-    const columnMetadata = internalStorage.getEntityColumnsOptionsList(table.target);
 
     const result: PermissionResult = {
         insert_permissions: [],
@@ -35,7 +33,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "select"),
-                    filter: convertWhereClause<Entity>(where, select.where)
+                    filter: convertWhereClause<Entity>(where, select.where),
+                    limit: select.limit || dataSourceOptions.defaultSelectPermissionLimit,
                 }
             })
         }

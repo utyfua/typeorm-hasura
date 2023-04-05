@@ -8,13 +8,14 @@ import {
 import { HasuraColumn, HasuraEntity } from '../../src';
 import { User } from './User';
 import { Org } from "./Org";
+import { UserRole } from '../UserRole';
 
 
 @Entity({ schema: 'public', name: 'Product' })
 @HasuraEntity<Product>({
-    customName: 'product',
+    customName: 'Product',
     permissions: {
-        user: {
+        [UserRole.user]: {
             where: [
                 { userId: 'X-Hasura-User-Id' },
                 {
@@ -34,7 +35,7 @@ export class Product extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @HasuraColumn({
         permissions: {
-            user: ['select']
+            [UserRole.user]: ['select']
         }
     })
     id!: string;
@@ -42,7 +43,7 @@ export class Product extends BaseEntity {
     @Column({ type: 'text', nullable: true })
     @HasuraColumn({
         permissions: {
-            user: ['select', 'update']
+            [UserRole.user]: ['select', 'update']
         }
     })
     name!: string;
@@ -50,7 +51,7 @@ export class Product extends BaseEntity {
     @Column({ name: 'orgId', type: 'uuid', nullable: true })
     @HasuraColumn({
         permissions: {
-            user: ['select']
+            [UserRole.user]: ['select']
         }
     })
     orgId!: string;
@@ -62,7 +63,7 @@ export class Product extends BaseEntity {
     @Column({ name: 'userId', type: 'uuid', nullable: true })
     @HasuraColumn({
         permissions: {
-            user: ['select']
+            [UserRole.user]: ['select']
         }
     })
     userId!: string;

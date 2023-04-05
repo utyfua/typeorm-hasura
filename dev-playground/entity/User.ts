@@ -10,13 +10,14 @@ import {
 import { HasuraColumn, HasuraEntity } from '../../src';
 import { Org } from './Org';
 import { Product } from './Product';
+import { UserRole } from '../UserRole';
 
 
 @Entity({ schema: 'public', name: 'User' })
 @HasuraEntity<User>({
-    customName: 'user',
+    customName: 'User',
     permissions: {
-        user: {
+        [UserRole.user]: {
             select: true,
             update: {
                 where: {
@@ -28,15 +29,15 @@ import { Product } from './Product';
 })
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    @HasuraColumn({ permissions: { user: ['select'] } })
+    @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     id!: string;
 
     @Column({ type: 'text', nullable: true })
-    @HasuraColumn({ permissions: { user: ['select', 'update'] } })
+    @HasuraColumn({ permissions: { [UserRole.user]: ['select', 'update'] } })
     name!: string;
 
     @Column({ name: 'orgId', type: 'uuid', nullable: true })
-    @HasuraColumn({ permissions: { user: ['select'] } })
+    @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     orgId!: string;
 
     @ManyToOne(() => Org, (org) => org.users)

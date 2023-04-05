@@ -1,8 +1,8 @@
 import { ColumnOptions, EntityOptions, ColumnMetadata, EntityTarget } from "./types";
 
 export const internalStorage = {
-    entityMetadata: new WeakMap<EntityTarget, EntityOptions>(),
-    pushEntityOptions(target: EntityTarget, options: EntityOptions) {
+    entityMetadata: new WeakMap<EntityTarget, EntityOptions<{}>>(),
+    pushEntityOptions(target: EntityTarget, options: EntityOptions<{}>) {
         internalStorage.entityMetadata.set(target, options);
     },
     getEntityOptions<Entity extends Object = Object>(target: EntityTarget) {

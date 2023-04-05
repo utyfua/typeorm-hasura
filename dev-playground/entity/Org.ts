@@ -8,13 +8,14 @@ import {
 import { HasuraEntity, HasuraColumn } from '../../src';
 import { Product } from './Product';
 import { User } from './User';
+import { UserRole } from '../UserRole';
 
 
 @Entity({ schema: 'public', name: 'Org' })
 @HasuraEntity<Org>({
-    customName: 'org',
+    customName: 'Org',
     permissions: {
-        user: {
+        [UserRole.user]: {
             where: {
                 users: {
                     id: 'X-Hasura-User-Id'
@@ -29,7 +30,7 @@ export class Org extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @HasuraColumn({
         permissions: {
-            user: ['select']
+            [UserRole.user]: ['select']
         }
     })
     id!: string;
@@ -38,7 +39,7 @@ export class Org extends BaseEntity {
     @HasuraColumn({
         // customName: 'myOrgName',
         permissions: {
-            user: ['select', 'update']
+            [UserRole.user]: ['select', 'update']
         }
     })
     name!: string;

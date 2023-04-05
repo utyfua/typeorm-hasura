@@ -1,5 +1,5 @@
+export * from './builders'
 export * from './decorators'
 export * as mappers from './mappers'
 export * from './types'
-export * from './GeneratorInstance'
 export * from './internalStorage'

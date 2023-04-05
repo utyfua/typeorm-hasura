@@ -1,4 +1,4 @@
-import { EntityOptions, ColumnMetadata } from "../types";
+import { EntityOptions, ColumnMetadata, DataSourceOptions } from "../types";
 import { BaseEntity } from "typeorm"
 import { generatePermissions, PermissionResult } from "./permissions"
 import { Org } from "../../dev-playground/entity"
@@ -7,6 +7,8 @@ type Cases<Entity extends BaseEntity> = {
     input: EntityOptions<Entity>,
     output: PermissionResult
 }
+
+const dataSourceOptions = {} as unknown as DataSourceOptions
 
 let TestColumns: ColumnMetadata[] = [
     {
@@ -134,6 +136,8 @@ const cases: Cases<Org>[] = [
 
 describe("convert whereTypeorm to hasuraObj", () => {
     cases.forEach(({ input, output }) =>
-        it("input to Equal output", () => expect(generatePermissions(input, TestColumns)).toEqual(output))
+        it("input to Equal output", () =>
+            expect(generatePermissions(dataSourceOptions, input, TestColumns))
+                .toEqual(output))
     )
 })

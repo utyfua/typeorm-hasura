@@ -1,8 +1,8 @@
-import { DataSourceOptions } from "./types";
-import * as Hasura from "./MetadataV3";
-import { generateSource } from "./mappers";
+import { ActionBuildResult, DataSourceOptions, GraphQlMetadataForAction } from "../types";
+import * as Hasura from "../MetadataV3";
+import { generateSource } from "../mappers";
 
-export class TypeormHasuraMetadataGenerator {
+export class MetadataBuilder {
     private _metadata: Hasura.Metadata;
 
     constructor() {
@@ -10,14 +10,19 @@ export class TypeormHasuraMetadataGenerator {
             resource_version: 0,
             metadata: {
                 version: 3,
-                sources: []
+                sources: [],
+                actions: [],
+                custom_types: {
+                    input_objects: [],
+                    objects: [],
+                    scalars: [],
+                    enums: [],
+                },
                 // backend_configs?: BackendConfigs;
                 // remote_schemas?: RemoteSchema[];
-                // actions?: Action[];
                 // query_collections?: QueryCollection[];
                 // allowlist?: AllowList[];
                 // inherited_roles?: InheritedRole[];
-                // custom_types?: CustomTypes;
                 // cron_triggers?: CronTrigger[];
                 // network?: Network;
                 // rest_endpoints?: RestEndpoint[];
@@ -51,6 +56,34 @@ export class TypeormHasuraMetadataGenerator {
         sourceOptions.forEach(sourceOptions => this.addSource(sourceOptions));
         return this;
     }
+
+
+    // .addActions([
+    //     currencyConverterAction
+    // ])
+
+    /**
+     * Adds an action to the metadata.
+     */
+    addAction(action: ActionBuildResult) {
+        const metadata = this._metadata.metadata;
+        if(!metadata.actions || !metadata.custom_types?.input_objects) {
+            throw new Error("Metadata object is not initialized correctly.");
+        }
+        metadata.actions.push(...action.actions);
+        metadata.custom_types.input_objects?.push(...action.custom_types?.input_objects!);
+        metadata.custom_types.objects?.push(...action.custom_types?.objects!);
+        return this;
+    }
+
+    /**
+     * Adds multiple actions to the metadata.
+     */
+    addActions(actions: ActionBuildResult[]) {
+        actions.forEach(action => this.addAction(action));
+        return this;
+    }
+
 
     /**
      * Returns the metadata.

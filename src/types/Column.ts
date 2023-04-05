@@ -1,4 +1,4 @@
-import { UserActionType, UserRole } from "./base";
+import { UserActionType, UserRoleName } from "./base";
 import { EntityTarget } from "./Entity";
 
 
@@ -12,7 +12,7 @@ export interface ColumnOptions {
      * Column type which will be allowed to do actions.
      */
     permissions?: {
-        [role: UserRole]: UserActionType[] | UserActionType | boolean
+        [role: UserRoleName]: UserActionType[] | UserActionType | boolean
     }
 }
 
