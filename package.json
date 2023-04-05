@@ -1,6 +1,6 @@
 {
   "name": "typeorm-hasura",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "keywords": [
     "hasura",
@@ -9,6 +9,11 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "type": "commonjs",
   "repository": {
     "type": "git",
