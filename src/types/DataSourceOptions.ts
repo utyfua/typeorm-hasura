@@ -1,5 +1,5 @@
 import * as TypeORM from "typeorm";
-import * as Hasura from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 
 export interface DataSourceOptions {
     name: string;

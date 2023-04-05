@@ -2,20 +2,25 @@
    "compilerOptions": {
       "strict": true,
       "target": "es6",
-      "module": "commonjs",
+      "module": "ESNext",
       "moduleResolution": "node",
-      "outDir": "./build",
+      "outDir": "./dist",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
       "sourceMap": true,
       "types": [
          "node",
          "jest"
       ],
+      "rootDir": "./src"
    },
+   "include": [
+      "./src/**/*.ts"
+   ],
    "exclude": [
       "node_modules",
       "build",
-      "dependencies"
+      "**/*.spec.ts"
    ]
 }

@@ -1,7 +1,7 @@
 import * as TypeORM from "typeorm";
-import * as Hasura from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 import { ColumnMetadata, EntityOptions, EntityRootField } from "../types";
-import snakeCase = require("lodash.snakecase");
+import snakeCase from 'lodash.snakecase'
 
 export function generateTableConfiguration<Entity extends Object>(table: TypeORM.EntityMetadata,
     entityOptions: EntityOptions<Entity> | undefined,

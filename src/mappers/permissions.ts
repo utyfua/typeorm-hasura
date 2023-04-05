@@ -1,8 +1,8 @@
-import { MetadataTable } from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 import { ColumnMetadata, DataSourceOptions, EntityOptions, UserActionType } from "../types";
 import { convertWhereClause } from "./whereClause"
 export type PermissionResult = Required<Pick<
-    MetadataTable,
+    Hasura.MetadataTable,
     "insert_permissions" | "select_permissions" | "update_permissions" | "delete_permissions"
 >>
 

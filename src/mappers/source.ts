@@ -1,5 +1,5 @@
+import type * as Hasura from "hasura-metadata-types";
 import { DataSourceOptions } from "../types";
-import * as Hasura from "../MetadataV3";
 import { getHasuraKind } from "./hasuraKind";
 import { getDatabaseUrl } from "./databaseUrl";
 import { generateTable } from "./table";

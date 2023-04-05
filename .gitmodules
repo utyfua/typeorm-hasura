@@ -1,3 +1,0 @@
-[submodule "dependencies/hasura-graphql-engine-source"]
-	path = dependencies/hasura-graphql-engine-source
-	url = https://github.com/hasura/graphql-engine

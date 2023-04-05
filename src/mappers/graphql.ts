@@ -1,8 +1,8 @@
 import { DocumentNode, FieldDefinitionNode, InputValueDefinitionNode } from "graphql";
-import { InputArgument } from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 import { GraphQlMetadataForAction } from "../types";
 
-function mapFields(values: readonly InputValueDefinitionNode[] | readonly FieldDefinitionNode[]): InputArgument[] {
+function mapFields(values: readonly InputValueDefinitionNode[] | readonly FieldDefinitionNode[]): Hasura.InputArgument[] {
     return values.map(value => ({
         name: value.name.value,
         // @ts-ignore

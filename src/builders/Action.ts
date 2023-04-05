@@ -1,4 +1,4 @@
-import * as Hasura from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 import { getGraphQLDefinitions } from "../mappers/graphql";
 import { ActionBuildResult, ActionCustomMetadataV1 } from "../types";
 

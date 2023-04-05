@@ -1,5 +1,5 @@
+import type * as Hasura from "hasura-metadata-types";
 import * as TypeORM from "typeorm";
-import * as Hasura from "../MetadataV3";
 import { generateRelationships } from "./relationships";
 import { generateTableConfiguration } from "./tableConfiguration";
 import { DataSourceOptions } from "../types";

@@ -1,12 +1,11 @@
 import * as TypeORM from "typeorm";
-import * as Hasura from "../MetadataV3";
-import { LocalTableObjectRelationship, SameTableObjectRelationship } from "../MetadataV3";
+import type * as Hasura from "hasura-metadata-types";
 
 type RelationshipKind = 'object_relationships' | 'array_relationships'
 
 export function generateRelationship(relation: TypeORM.EntityMetadata['relations'][number]): {
     kind: RelationshipKind,
-    relationship: LocalTableObjectRelationship | SameTableObjectRelationship
+    relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship
 } {
     const kind = relation.relationType.endsWith('-to-one') ? 'object_relationships' : 'array_relationships';
 
@@ -23,7 +22,7 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
     // @ts-ignore is that okay?
     const schema = owningRelation.target.dataSource.options.schema || 'public';
 
-    const relationship: LocalTableObjectRelationship | SameTableObjectRelationship =
+    const relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship =
         relation.isOwning ? {
             name: relation.propertyName,
             using: {

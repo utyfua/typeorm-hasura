@@ -2,5 +2,5 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testPathIgnorePatterns: ['/node_modules/', '/dependencies/'],
+  testPathIgnorePatterns: ['/node_modules/'],
 };

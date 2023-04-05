@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql"
-import * as Hasura from "../MetadataV3"
+import type * as Hasura from "hasura-metadata-types";
 import { UserRoleName } from "./base";
 
 export type GraphQlMetadataForAction = {

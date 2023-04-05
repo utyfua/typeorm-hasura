@@ -1,5 +1,5 @@
-import { ActionBuildResult, DataSourceOptions, GraphQlMetadataForAction } from "../types";
-import * as Hasura from "../MetadataV3";
+import { ActionBuildResult, DataSourceOptions } from "../types";
+import type * as Hasura from "hasura-metadata-types";
 import { generateSource } from "../mappers";
 
 export class MetadataBuilder {
