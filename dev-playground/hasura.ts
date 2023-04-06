@@ -14,6 +14,9 @@ async function convert() {
         .addActions([
             currencyConverterAction,
         ])
+        .addInheritedRoles({
+            testUser: ["admin","editor"]
+        })
         .getMetadata()
 
     await mkdir("tmp/output", { recursive: true })

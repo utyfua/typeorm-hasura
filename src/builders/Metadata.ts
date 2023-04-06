@@ -1,6 +1,7 @@
-import { ActionBuildResult, DataSourceOptions } from "../types";
+import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
 import type * as Hasura from "hasura-metadata-types";
 import { generateSource } from "../mappers";
+import { convertInheritedRoles } from "../mappers/inheritedRoles";
 
 export class MetadataBuilder {
     private _metadata: Hasura.Metadata;
@@ -22,7 +23,7 @@ export class MetadataBuilder {
                 // remote_schemas?: RemoteSchema[];
                 // query_collections?: QueryCollection[];
                 // allowlist?: AllowList[];
-                // inherited_roles?: InheritedRole[];
+                inherited_roles: [],
                 // cron_triggers?: CronTrigger[];
                 // network?: Network;
                 // rest_endpoints?: RestEndpoint[];
@@ -67,7 +68,7 @@ export class MetadataBuilder {
      */
     addAction(action: ActionBuildResult) {
         const metadata = this._metadata.metadata;
-        if(!metadata.actions || !metadata.custom_types?.input_objects) {
+        if (!metadata.actions || !metadata.custom_types?.input_objects) {
             throw new Error("Metadata object is not initialized correctly.");
         }
         metadata.actions.push(...action.actions);
@@ -84,6 +85,13 @@ export class MetadataBuilder {
         return this;
     }
 
+    /**
+    * Adds inherited roles to the metadata.
+    */
+    addInheritedRoles(roles: InheritedRoles) {
+        this._metadata.metadata.inherited_roles!.push(...convertInheritedRoles(roles))
+        return this
+    }
 
     /**
      * Returns the metadata.
