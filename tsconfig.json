@@ -2,7 +2,7 @@
    "compilerOptions": {
       "strict": true,
       "target": "es6",
-      "module": "ESNext",
+      "module": "CommonJS",
       "moduleResolution": "node",
       "outDir": "./dist",
       "emitDecoratorMetadata": true,
@@ -13,10 +13,10 @@
          "node",
          "jest"
       ],
-      "rootDir": "./src"
    },
    "include": [
-      "./src/**/*.ts"
+      "./src/**/*.ts",
+      "./dev-playground/**/*.ts"
    ],
    "exclude": [
       "node_modules",
