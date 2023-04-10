@@ -1,14 +1,13 @@
 {
   "name": "typeorm-hasura",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "keywords": [
     "hasura",
     "typeorm"
   ],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/esm/src/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -25,9 +24,8 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "prebuild": "run-s clean",
-    "build": "run-s build:tsc build:rollup",
+    "build": "run-s build:tsc",
     "build:tsc": "tsc --module commonjs",
-    "build:rollup": "rollup -c ",
     "typeorm": "typeorm-ts-node-esm",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -53,10 +51,6 @@
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-node-resolve": "^15.0.2",
-    "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.0",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/node": "^18.14.0",
@@ -67,7 +61,6 @@
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rollup": "^2.79.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.12"

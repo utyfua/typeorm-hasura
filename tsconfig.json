@@ -9,6 +9,7 @@
       "experimentalDecorators": true,
       "allowSyntheticDefaultImports": true,
       "sourceMap": true,
+      "declaration": true,
       "types": [
          "node",
          "jest"
