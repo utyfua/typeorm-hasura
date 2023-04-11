@@ -27,7 +27,7 @@ function parseParameters<Entity extends Object>(object: FindOptionsWhere<Entity>
             if (operator) {
                 conditions.push({ [key]: { [operator]: parameterValue.value } })
             } else
-                throw new Error("this operator is not supported in this time");
+                throw new Error(`operator "${parameterValue.type}" is not supported in this time`);
         } else if (["string", "number", "boolean"].includes(typeof parameterValue)) {
             conditions.push({ [key]: { "_eq": parameterValue } })
         } else if (typeof parameterValue === "object" && !Array.isArray(parameterValue) && parameterValue !== null) {

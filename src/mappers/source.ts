@@ -14,7 +14,8 @@ export function generateSource(dataSourceOptions: DataSourceOptions): Hasura.Sou
         name,
         kind: getHasuraKind(dataSource.options.type),
         tables: [...dataSource.entityMetadatas]
-            .reverse()
+            // sort to be consistent with hasura
+            .sort((a, b) => a.name.localeCompare(b.name))
             .map(table => generateTable(dataSourceOptions, table)),
         customization,
         configuration: {

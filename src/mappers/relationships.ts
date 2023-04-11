@@ -11,11 +11,11 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
 
     const owningRelation = relation.isOwning ? relation : relation.inverseRelation;
 
-    if (!owningRelation)
+    if (!owningRelation || relation.isManyToMany)
         throw new Error('Does not support many-to-many relations yet, so we will skip this specific relation. ' +
             'Also its possible that you have missed to set inverse side of the relation.');
 
-    const columns = owningRelation.joinColumns.map(column => column.propertyName);
+    const columns = owningRelation.joinColumns.map(column => column.databaseName);
 
     // todo: does not work?
     // const schema = owningRelation.entityMetadata.schema;
@@ -26,13 +26,13 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
         relation.isOwning ? {
             name: relation.propertyName,
             using: {
-                foreign_key_constraint_on: columns
+                foreign_key_constraint_on: columns.length === 1 ? columns[0] : columns
             }
         } : {
             name: relation.propertyName,
             using: {
                 foreign_key_constraint_on: {
-                    columns,
+                    ...(columns?.length === 1 ? { column: columns[0] } : { columns }),
                     table: {
                         name: owningRelation.entityMetadata.tableName,
                         schema,
@@ -50,6 +50,9 @@ export function generateRelationships(relations: TypeORM.EntityMetadata['relatio
         object_relationships: [],
         array_relationships: [],
     }
+
+    // sort to be consistent with hasura
+    relations.sort((a, b) => a.propertyName.localeCompare(b.propertyName));
 
     for (const relation of relations) {
         try {

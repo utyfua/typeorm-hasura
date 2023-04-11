@@ -13,7 +13,7 @@ export function generateTable<Entity extends Object>(
     const entityOptions = internalStorage.getEntityOptions<Entity>(table.target);
     const columnMetadata = internalStorage.getEntityColumnsOptionsList(table.target);
 
-    return {
+    const metadata: Hasura.MetadataTable = {
         table: {
             name: table.tableName,
             // todo: does not work?
@@ -24,4 +24,14 @@ export function generateTable<Entity extends Object>(
         ...generateRelationships(table.relations),
         ...generatePermissions(dataSourceOptions, entityOptions, columnMetadata),
     }
+
+    // be consistent with hasura
+    if(!metadata.object_relationships?.length) delete metadata.object_relationships;
+    if(!metadata.array_relationships?.length) delete metadata.array_relationships;
+    if(!metadata.insert_permissions?.length) delete metadata.insert_permissions;
+    if(!metadata.select_permissions?.length) delete metadata.select_permissions;
+    if(!metadata.update_permissions?.length) delete metadata.update_permissions;
+    if(!metadata.delete_permissions?.length) delete metadata.delete_permissions;
+
+    return metadata;
 }

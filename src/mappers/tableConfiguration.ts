@@ -19,7 +19,7 @@ export function generateTableConfiguration<Entity extends Object>(table: TypeORM
             }])
         }
     }
-    const column_config = columnHasuraEntries.length ? Object.fromEntries(columnHasuraEntries) : undefined;
+    const column_config = columnHasuraEntries.length ? Object.fromEntries(columnHasuraEntries) : {};
 
     const custom_root_fields: Record<string, EntityRootField> = {};
     if (entityOptions?.customRootFields) {
@@ -38,8 +38,12 @@ export function generateTableConfiguration<Entity extends Object>(table: TypeORM
     }
 
     return {
-        custom_name,
         column_config,
+
+        // legacy, but we are consistent with hasura
+        custom_column_names: {},
+
+        custom_name,
         custom_root_fields,
     }
 }
