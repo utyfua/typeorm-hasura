@@ -1,6 +1,6 @@
 {
   "name": "typeorm-hasura",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "keywords": [
     "hasura",
@@ -43,11 +43,13 @@
   "dependencies": {
     "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
     "graphql-tag": "^2.0.0",
+    "hasura-metadata-types": "2.22.1",
     "lodash.snakecase": "^4.1.1"
   },
   "peerDependencies": {
     "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
     "graphql-tag": "^2.0.0",
+    "hasura-metadata-types": "^2.22.1",
     "typeorm": "^0.3.0"
   },
   "devDependencies": {
@@ -55,7 +57,6 @@
     "@types/lodash.snakecase": "^4.1.7",
     "@types/node": "^18.14.0",
     "env-cmd": "^10.1.0",
-    "hasura-metadata-types": "^2.22.1",
     "jest": "^29.5.0",
     "npm-run-all": "^4.1.5",
     "pg": "^8.10.0",
