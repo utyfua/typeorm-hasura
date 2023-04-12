@@ -17,10 +17,6 @@ export const internalStorage = {
     },
 
     getEntityWorkspace<Entity extends Object = Object>(target: EntityTarget): EntityInternalStorageWorkspace<Entity> {
-        console.log({
-            entityOptions: internalStorage.entityMetadata.get(target) as EntityOptions<Entity> | undefined,
-            columnMetadata: internalStorage.columnMetadata.filter(column => column.object.constructor === target),
-        })
         const inheritanceTree = MetadataUtils.getInheritanceTree(target)
         return {
             entityOptions: internalStorage.entityMetadata.get(target) as EntityOptions<Entity> | undefined,
