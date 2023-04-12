@@ -10,8 +10,7 @@ export function generateTable<Entity extends Object>(
     dataSourceOptions: DataSourceOptions,
     table: TypeORM.EntityMetadata
 ): Hasura.MetadataTable {
-    const entityOptions = internalStorage.getEntityOptions<Entity>(table.target);
-    const columnMetadata = internalStorage.getEntityColumnsOptionsList(table.target);
+    const entityWorkspace = internalStorage.getEntityWorkspace<Entity>(table.target);
 
     const metadata: Hasura.MetadataTable = {
         table: {
@@ -20,18 +19,18 @@ export function generateTable<Entity extends Object>(
             // schema: table.schema,
             schema: 'schema' in table.connection.options && table.connection.options.schema || 'public',
         },
-        configuration: generateTableConfiguration(table, entityOptions, columnMetadata),
+        configuration: generateTableConfiguration(table, entityWorkspace),
         ...generateRelationships(table.relations),
-        ...generatePermissions(dataSourceOptions, entityOptions, columnMetadata),
+        ...generatePermissions(dataSourceOptions, entityWorkspace),
     }
 
     // be consistent with hasura
-    if(!metadata.object_relationships?.length) delete metadata.object_relationships;
-    if(!metadata.array_relationships?.length) delete metadata.array_relationships;
-    if(!metadata.insert_permissions?.length) delete metadata.insert_permissions;
-    if(!metadata.select_permissions?.length) delete metadata.select_permissions;
-    if(!metadata.update_permissions?.length) delete metadata.update_permissions;
-    if(!metadata.delete_permissions?.length) delete metadata.delete_permissions;
+    if (!metadata.object_relationships?.length) delete metadata.object_relationships;
+    if (!metadata.array_relationships?.length) delete metadata.array_relationships;
+    if (!metadata.insert_permissions?.length) delete metadata.insert_permissions;
+    if (!metadata.select_permissions?.length) delete metadata.select_permissions;
+    if (!metadata.update_permissions?.length) delete metadata.update_permissions;
+    if (!metadata.delete_permissions?.length) delete metadata.delete_permissions;
 
     return metadata;
 }

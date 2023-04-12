@@ -1,3 +1,4 @@
+import { ColumnMetadata } from "./Column";
 import { UserActionType, UserRoleName } from "./base";
 import { BasePermissionRule, SelectPermissionRule } from "./permissions";
 import { Where } from "./whereClause";
@@ -33,21 +34,25 @@ export interface EntityOptions<Entity extends Object = Object> {
      */
     customName?: string;
 
-    customRootFields?: 
-        Partial<Record<
-            | 'select'
-            | 'selectByPk'
-            | 'selectAggregate'
-            | 'selectStream'
-            | 'insert'
-            | 'insertOne'
-            | 'update'
-            | 'updateByPk'
-            | 'delete'
-            | 'deleteByPk'
-            | 'updateMany'
+    customRootFields?:
+    Partial<Record<
+        | 'select'
+        | 'selectByPk'
+        | 'selectAggregate'
+        | 'selectStream'
+        | 'insert'
+        | 'insertOne'
+        | 'update'
+        | 'updateByPk'
+        | 'delete'
+        | 'deleteByPk'
+        | 'updateMany'
         , EntityRootField | string>>,
 
     permissions?: Permissions<Entity>
 }
 
+export interface EntityInternalStorageWorkspace<Entity extends Object = Object> {
+    entityOptions: EntityOptions<Entity> | undefined,
+    columnMetadata: ColumnMetadata[],
+}

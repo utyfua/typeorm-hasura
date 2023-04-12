@@ -1,11 +1,11 @@
 import * as TypeORM from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
-import { ColumnMetadata, EntityOptions, EntityRootField } from "../types";
+import { EntityInternalStorageWorkspace, EntityRootField } from "../types";
 import snakeCase from 'lodash.snakecase'
 
-export function generateTableConfiguration<Entity extends Object>(table: TypeORM.EntityMetadata,
-    entityOptions: EntityOptions<Entity> | undefined,
-    columnMetadata: ColumnMetadata[]
+export function generateTableConfiguration<Entity extends Object>(
+    table: TypeORM.EntityMetadata,
+    { entityOptions, columnMetadata }: EntityInternalStorageWorkspace<Entity>,
 ): Hasura.MetadataTableConfig {
 
     let custom_name: string | undefined = entityOptions && entityOptions.customName || table.tableName;

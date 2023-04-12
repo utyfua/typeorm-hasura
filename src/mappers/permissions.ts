@@ -1,5 +1,5 @@
 import type * as Hasura from "hasura-metadata-types";
-import { ColumnMetadata, DataSourceOptions, EntityOptions, UserActionType } from "../types";
+import { ColumnMetadata, DataSourceOptions, EntityInternalStorageWorkspace, UserActionType } from "../types";
 import { convertWhereClause } from "./whereClause"
 export type PermissionResult = Required<Pick<
     Hasura.MetadataTable,
@@ -8,8 +8,7 @@ export type PermissionResult = Required<Pick<
 
 export function generatePermissions<Entity extends Object = Object>(
     dataSourceOptions: DataSourceOptions,
-    entityOptions: EntityOptions<Entity> | undefined,
-    columnMetadata: ColumnMetadata[]
+    { entityOptions, columnMetadata }: EntityInternalStorageWorkspace<Entity>,
 ): PermissionResult {
 
     const result: PermissionResult = {
