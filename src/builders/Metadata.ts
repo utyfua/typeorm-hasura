@@ -1,8 +1,12 @@
-import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
+import axios from "axios";
 import type * as Hasura from "hasura-metadata-types";
+import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
 import { generateSource } from "../mappers";
 import { convertInheritedRoles } from "../mappers/inheritedRoles";
 
+/**
+ * The builder for the metadata.
+ */
 export class MetadataBuilder {
     private _metadata: Hasura.Metadata;
 
@@ -43,6 +47,8 @@ export class MetadataBuilder {
 
     /**
      * Adds a source to the metadata.
+     * 
+     * @param sourceOptions The options of the source to add.
      */
     addSource(sourceOptions: DataSourceOptions) {
         const source = generateSource(sourceOptions);
@@ -52,19 +58,19 @@ export class MetadataBuilder {
 
     /**
      * Adds multiple sources to the metadata.
+     * 
+     * @param sourceOptionsList The options of the sources to add.
      */
-    addSources(sourceOptions: DataSourceOptions[]) {
-        sourceOptions.forEach(sourceOptions => this.addSource(sourceOptions));
+    addSources(sourceOptionsList: DataSourceOptions[]) {
+        sourceOptionsList.forEach(sourceOptions => this.addSource(sourceOptions));
         return this;
     }
 
-
-    // .addActions([
-    //     currencyConverterAction
-    // ])
-
     /**
      * Adds an action to the metadata.
+     * 
+     * @param action The action to add.
+     * @note Use the `ActionBuilder` to create an action.
      */
     addAction(action: ActionBuildResult) {
         const metadata = this._metadata.metadata;
@@ -79,6 +85,9 @@ export class MetadataBuilder {
 
     /**
      * Adds multiple actions to the metadata.
+     * 
+     * @param actions The actions to add.
+     * @note Use the `ActionBuilder` to create an action.
      */
     addActions(actions: ActionBuildResult[]) {
         actions.forEach(action => this.addAction(action));
@@ -87,6 +96,8 @@ export class MetadataBuilder {
 
     /**
     * Adds inherited roles to the metadata.
+    * 
+    * @param roles The map of roles to inherit.
     */
     addInheritedRoles(roles: InheritedRoles) {
         this._metadata.metadata.inherited_roles!.push(...convertInheritedRoles(roles))
@@ -100,5 +111,25 @@ export class MetadataBuilder {
      */
     getMetadata(): Hasura.Metadata | Promise<Hasura.Metadata> {
         return this._metadata;
+    }
+
+    /**
+     * Applies the metadata to the Hasura instance.
+     * 
+     * @param hasuraUrl The URL of the Hasura instance.
+     * @param adminSecret The admin secret of the Hasura instance.
+     * @returns The response of the Hasura instance.
+    */
+    async applyMetadata({ hasuraUrl, adminSecret }: { hasuraUrl: string, adminSecret: string }) {
+        const { metadata } = await this.getMetadata();
+        const { data } = await axios.post(`${hasuraUrl}/v1/metadata`, {
+            type: "replace_metadata",
+            args: metadata
+        }, {
+            headers: {
+                'X-Hasura-Admin-Secret': adminSecret
+            }
+        })
+        return data;
     }
 }

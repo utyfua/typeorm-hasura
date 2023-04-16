@@ -4,7 +4,7 @@ import { AppDataSource } from "./data-source"
 import { writeFile, mkdir } from "fs/promises"
 
 async function convert() {
-    const metadata = await new MetadataBuilder()
+    const generator = new MetadataBuilder()
         .addSource({
             name: "public",
             dataSource: AppDataSource,
@@ -17,7 +17,7 @@ async function convert() {
         .addInheritedRoles({
             testUser: ["admin","editor"]
         })
-        .getMetadata()
+    const metadata = generator.getMetadata();
 
     await mkdir("tmp/output", { recursive: true })
         .catch(error => console.log(error));
