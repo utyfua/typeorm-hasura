@@ -148,8 +148,8 @@ Here's a step-by-step guide on how to use typeorm-hasura:
 ## Contributing
 
 We appreciate your help in improving the "typeorm-hasura" library.
-<!-- Please follow our [contributing guidelines](https://github.com/utyfua/typeorm-hasura/CONTRIBUTING.md) to contribute to the project. -->
+<!-- Please follow our [contributing guidelines](https://github.com/utyfua/typeorm-hasura/blob/master/CONTRIBUTING.md) to contribute to the project. -->
 
 ## License
 
-`typeorm-hasura` is released under the [MIT License](https://github.com/utyfua/typeorm-hasura/LICENSE).
+`typeorm-hasura` is released under the [MIT License](https://github.com/utyfua/typeorm-hasura/blob/master/LICENSE).

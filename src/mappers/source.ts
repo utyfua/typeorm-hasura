@@ -16,6 +16,8 @@ export function generateSource(dataSourceOptions: DataSourceOptions): Hasura.Sou
         tables: [...dataSource.entityMetadatas]
             // sort to be consistent with hasura
             .sort((a, b) => a.name.localeCompare(b.name))
+            // we only want to generate tables for regular tables cuz we doesn't support another types
+            .filter(table => table.tableType === 'regular')
             .map(table => generateTable(dataSourceOptions, table)),
         customization,
         configuration: {
