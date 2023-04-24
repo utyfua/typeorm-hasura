@@ -1,3 +1,4 @@
+import * as TypeORM from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 import { ColumnMetadata, DataSourceOptions, EntityInternalStorageWorkspace, UserActionType } from "../types";
 import { convertWhereClause } from "./whereClause"
@@ -8,6 +9,7 @@ export type PermissionResult = Required<Pick<
 
 export function generatePermissions<Entity extends Object = Object>(
     dataSourceOptions: DataSourceOptions,
+    table: TypeORM.EntityMetadata,
     { entityOptions, columnMetadata }: EntityInternalStorageWorkspace<Entity>,
 ): PermissionResult {
 
@@ -32,7 +34,7 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "select"),
-                    filter: convertWhereClause<Entity>(where, select.where),
+                    filter: convertWhereClause<Entity>(table, where, select.where),
                     limit: select.limit || dataSourceOptions.defaultSelectPermissionLimit,
                 }
             })
@@ -43,7 +45,7 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "update"),
-                    filter: convertWhereClause<Entity>(where, update.where)
+                    filter: convertWhereClause<Entity>(table, where, update.where)
                 }
             })
         }
@@ -64,7 +66,7 @@ export function generatePermissions<Entity extends Object = Object>(
             result.delete_permissions.push({
                 role: key,
                 permission: {
-                    filter: convertWhereClause<Entity>(where, myDelete.where)
+                    filter: convertWhereClause<Entity>(table, where, myDelete.where)
                 }
             })
         }

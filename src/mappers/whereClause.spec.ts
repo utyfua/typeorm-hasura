@@ -1,4 +1,4 @@
-import { Equal, Not, MoreThan, LessThan, MoreThanOrEqual, LessThanOrEqual, Like, ILike, In, BaseEntity } from "typeorm"
+import { Equal, Not, MoreThan, LessThan, MoreThanOrEqual, LessThanOrEqual, Like, ILike, In, BaseEntity, IsNull, And, EntityMetadata } from "typeorm"
 
 import { convertWhereClause } from "./whereClause"
 import { User, Org, Product } from "../../dev-playground/entity";
@@ -8,6 +8,38 @@ type Case<T extends BaseEntity> = {
     input: Where<T>;
     output: Filter<T>
 }
+const table = {
+    columns: [
+        { databaseName: "id", type: 'uuid' },
+        { databaseName: "name", type: 'text' },
+        { databaseName: "orgId", type: 'uuid' },
+        { databaseName: "testJsonB", type: 'jsonb' }
+    ],
+    relations: [
+        {
+            propertyName: "org",
+            inverseEntityMetadata: {
+                columns: [
+                    { databaseName: "id", type: 'uuid' },
+                    { databaseName: "name", type: 'text' },
+                ],
+                relations: [{}]
+            }
+        },
+        {
+            propertyName: "products",
+            inverseEntityMetadata: {
+                columns: [
+                    { databaseName: "id", type: 'uuid' },
+                    { databaseName: "name", type: 'text' },
+                    { databaseName: "orgId", type: 'uuid' },
+                    { databaseName: "userId", type: 'uuid' },
+                ],
+                relations: [{}]
+            }
+        }
+    ]
+} as EntityMetadata
 
 const cases: Case<User>[] = [
     {
@@ -75,11 +107,61 @@ const cases: Case<User>[] = [
                 id: { _eq: "1" },
             }
         }
+    },
+    {
+        input: {
+            products: {
+                id: Not(IsNull())
+            }
+        },
+        output: {
+            products: {
+                id: { _is_null: false },
+            }
+        }
+    },
+    {
+        input: {
+            products: {
+                id: Not("test")
+            }
+        },
+        output: {
+            products: {
+                id: { _neq: "test" },
+            }
+        }
+    },
+    {
+        input: {
+            products: {
+                id: IsNull()
+            }
+        },
+        output: {
+            products: {
+                id: { _is_null: true },
+            }
+        }
+    },
+    {
+        input: {
+            testJsonB: {
+                name: "test"
+            }
+        },
+        output: {
+            testJsonB: {
+                _contains: {
+                    name: "test"
+                }
+            }
+        }
     }
 ]
 
 describe("convert whereTypeorm to hasuraObj", () => {
     cases.forEach(({ input, output }) =>
-        it("input to Equal output", () => expect(convertWhereClause(input)).toEqual(output))
+        it("input to Equal output", () => expect(convertWhereClause(table, input)).toEqual(output))
     )
 })

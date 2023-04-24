@@ -11,14 +11,7 @@ export function generateTableConfiguration<Entity extends Object>(
     let custom_name: string | undefined = entityOptions && entityOptions.customName || table.tableName;
 
     const columnHasuraEntries: [string, Hasura.MetadataTableColumnConfig][] = [];
-    for (const column of columnMetadata) {
-        // looks like its only possible to set custom_name for columns here
-        if (column.options?.customName) {
-            columnHasuraEntries.push([column.propertyName, {
-                custom_name: column.options.customName,
-            }])
-        }
-    }
+
     const column_config = columnHasuraEntries.length ? Object.fromEntries(columnHasuraEntries) : {};
 
     const custom_root_fields: Record<string, EntityRootField> = {};

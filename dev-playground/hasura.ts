@@ -15,7 +15,7 @@ async function convert() {
             currencyConverterAction,
         ])
         .addInheritedRoles({
-            testUser: ["admin","editor"]
+            // testUser: ["admin", "editor"]
         })
     const metadata = generator.getMetadata();
 

@@ -37,7 +37,6 @@ export class Org extends BaseEntity {
 
     @Column({ type: 'text', nullable: true })
     @HasuraColumn({
-        // customName: 'myOrgName',
         permissions: {
             [UserRole.user]: ['select', 'update']
         }

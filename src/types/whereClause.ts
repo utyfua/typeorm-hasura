@@ -13,9 +13,9 @@ type StringParameters =
     | "_gte"
     | "_lte"
     | "_like"
-    // | "_nlike"
+    | "_nlike"
     | "_ilike"
-// | "_nilike"
+    | "_nilike"
 // | "_similar"
 // | "_nsimilar"
 // | "_regex"
@@ -25,7 +25,7 @@ type StringParameters =
 
 type ArrayParameters =
     | "_in"
-// | "_nin"
+    | "_nin"
 // | "_ceq"
 // | "_cne"
 // | "_cgt"
@@ -33,12 +33,17 @@ type ArrayParameters =
 // | "_cgte"
 // | "_clte"
 type NullParameters = "_is_null"
-type JsonBParameters = "_contains" | "_contained_in" | "_has_key" | "_has_keys_any" | "_has_keys_all"
-
-type ExclusiveParameters = ExclusiveKeys<
+type JsonBParameters =
+    | "_contains"
+// | "_contained_in"
+// | "_has_key"
+// | "_has_keys_any"
+// | "_has_keys_all"
+export type ExclusiveParameters = ExclusiveKeys<
     { [key in StringParameters]?: string; } &
     { [key in ArrayParameters]?: string[] } &
-    { [key in NullParameters]?: boolean }
+    { [key in NullParameters]?: boolean } &
+    { [key in JsonBParameters]?: Object }
 >
 type Subject<Entity extends Object> = {
     [key in keyof Entity]?: ExclusiveParameters
@@ -53,7 +58,7 @@ export type Filter<EntityParameters extends Object> = ExclusiveKeys<{
 }> | ExclusiveArguments<EntityParameters>
 
 export const Operators: Readonly<
-    Partial<Record<FindOperatorType, StringParameters | ArrayParameters>>
+    Partial<Record<FindOperatorType, StringParameters | ArrayParameters | NullParameters>>
 > = {
     // string
     "equal": "_eq",
@@ -66,10 +71,29 @@ export const Operators: Readonly<
     "ilike": "_ilike",
     // array
     "in": "_in",
-}
-enum NullParams {
-    "isNull" = "_is_null"
+    "isNull": "_is_null",
+} as const
+
+export const OppositeOperators: Readonly<
+    Partial<Record<StringParameters | ArrayParameters, StringParameters | ArrayParameters>>
+> = {
+    "_eq": "_neq",
+    "_neq": "_eq",
+    //
+    "_gt": "_lte",
+    "_lt": "_gte",
+    //
+    "_gte": "_lt",
+    "_lte": "_gt",
+    //
+    "_like": "_nlike",
+    "_nlike": "_like",
+    //
+    "_ilike": "_nilike",
+    "_nilike": "_ilike",
+    //
+    "_in": "_nin",
+    "_nin": "_in"
 }
 
 // all typeorm operators FindOperatorType
-

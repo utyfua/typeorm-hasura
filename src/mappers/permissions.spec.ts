@@ -1,14 +1,47 @@
+import * as TypeORM from "typeorm";
 import { EntityOptions, ColumnMetadata, DataSourceOptions } from "../types";
-import { BaseEntity } from "typeorm"
 import { generatePermissions, PermissionResult } from "./permissions"
-import { Org } from "../../dev-playground/entity"
+import { User } from "../../dev-playground/entity"
 
-type Cases<Entity extends BaseEntity> = {
+type Cases<Entity extends TypeORM.BaseEntity> = {
     input: EntityOptions<Entity>,
     output: PermissionResult
 }
 
 const dataSourceOptions = {} as unknown as DataSourceOptions
+
+const table = {
+    columns: [
+        { databaseName: "id", type: 'uuid' },
+        { databaseName: "name", type: 'text' },
+        { databaseName: "orgId", type: 'uuid' },
+        { databaseName: "testJsonB", type: 'jsonb' }
+    ],
+    relations: [
+        {
+            propertyName: "org",
+            inverseEntityMetadata: {
+                columns: [
+                    { databaseName: "id", type: 'uuid' },
+                    { databaseName: "name", type: 'text' },
+                ],
+                relations: [{}]
+            }
+        },
+        {
+            propertyName: "products",
+            inverseEntityMetadata: {
+                columns: [
+                    { databaseName: "id", type: 'uuid' },
+                    { databaseName: "name", type: 'text' },
+                    { databaseName: "orgId", type: 'uuid' },
+                    { databaseName: "userId", type: 'uuid' },
+                ],
+                relations: [{}]
+            }
+        }
+    ]
+} as TypeORM.EntityMetadata
 
 let TestColumns: ColumnMetadata[] = [
     {
@@ -22,7 +55,7 @@ let TestColumns: ColumnMetadata[] = [
     }
 ]
 
-const cases: Cases<Org>[] = [
+const cases: Cases<User>[] = [
     {
         input: {
             permissions: {
@@ -94,7 +127,7 @@ const cases: Cases<Org>[] = [
                     select: true,
                     update: {
                         where: {
-                            users: {
+                            products: {
                                 id: "1"
                             }
                         },
@@ -121,7 +154,7 @@ const cases: Cases<Org>[] = [
                         _and: [
                             { id: { _eq: "1" } },
                             {
-                                users: {
+                                products: {
                                     id: { _eq: "1" }
                                 }
                             }
@@ -137,7 +170,7 @@ const cases: Cases<Org>[] = [
 describe("convert whereTypeorm to hasuraObj", () => {
     cases.forEach(({ input, output }) =>
         it("input to Equal output", () =>
-            expect(generatePermissions(dataSourceOptions, { entityOptions: input, columnMetadata: TestColumns }))
+            expect(generatePermissions(dataSourceOptions, table, { entityOptions: input, columnMetadata: TestColumns }))
                 .toEqual(output))
     )
 })

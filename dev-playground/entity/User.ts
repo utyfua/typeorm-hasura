@@ -40,6 +40,9 @@ export class User extends BaseEntity {
     @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     orgId!: string;
 
+    @Column({ type: 'jsonb', nullable: true })
+    testJsonB!: object
+
     @ManyToOne(() => Org, (org) => org.users)
     @JoinColumn({ name: 'orgId' })
     org!: Org;

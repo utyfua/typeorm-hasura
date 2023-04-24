@@ -21,7 +21,7 @@ export function generateTable<Entity extends Object>(
         },
         configuration: generateTableConfiguration(table, entityWorkspace),
         ...generateRelationships(table.relations),
-        ...generatePermissions(dataSourceOptions, entityWorkspace),
+        ...generatePermissions(dataSourceOptions, table, entityWorkspace),
     }
 
     // be consistent with hasura
