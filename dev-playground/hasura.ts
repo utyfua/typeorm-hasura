@@ -1,7 +1,8 @@
+import gql from "graphql-tag";
+import { writeFile, mkdir } from "fs/promises"
 import { MetadataBuilder } from "../src";
 import { currencyConverterAction } from "./action/currencyConverter";
 import { AppDataSource } from "./data-source"
-import { writeFile, mkdir } from "fs/promises"
 
 async function convert() {
     const generator = new MetadataBuilder()
@@ -14,6 +15,9 @@ async function convert() {
         .addActions([
             currencyConverterAction,
         ])
+        .addGraphQLDefinitions(gql`
+            scalar JSON
+        `)
         .addInheritedRoles({
             // testUser: ["admin", "editor"]
         })

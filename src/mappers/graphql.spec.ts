@@ -118,7 +118,8 @@ describe("convert graphql document to hasura defs", () => {
                         }
                     ]
                 },
-            ]
+            ],
+            "scalars": []
         }
     }))
 })

@@ -1,8 +1,10 @@
 import axios from "axios";
+import { DocumentNode } from "graphql";
 import type * as Hasura from "hasura-metadata-types";
 import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
 import { generateSource } from "../mappers";
 import { convertInheritedRoles } from "../mappers/inheritedRoles";
+import { getGraphQLDefinitions } from "../mappers/graphql";
 
 /**
  * The builder for the metadata.
@@ -74,12 +76,31 @@ export class MetadataBuilder {
      */
     addAction(action: ActionBuildResult) {
         const metadata = this._metadata.metadata;
-        if (!metadata.actions || !metadata.custom_types?.input_objects) {
+        if (!metadata.actions) {
             throw new Error("Metadata object is not initialized correctly.");
         }
         metadata.actions.push(...action.actions);
-        metadata.custom_types.input_objects?.push(...action.custom_types?.input_objects!);
-        metadata.custom_types.objects?.push(...action.custom_types?.objects!);
+        this._pushCustomTypes(action.custom_types);
+        return this;
+    }
+
+    addGraphQLDefinitions(document: DocumentNode) {
+        const { custom_types,baseActions } = getGraphQLDefinitions(document);
+        if(baseActions?.length) {
+            throw new Error("You should not add base actions throw addGraphQLDefinitions. Use addAction instead.");
+        }
+        this._pushCustomTypes(custom_types);
+        return this;
+    }
+
+    _pushCustomTypes(custom_types: Hasura.CustomTypes) {
+        const metadata = this._metadata.metadata;
+        if (!metadata.custom_types?.input_objects) {
+            throw new Error("Metadata object is not initialized correctly.");
+        }
+        metadata.custom_types.input_objects?.push(...custom_types.input_objects!);
+        metadata.custom_types.objects?.push(...custom_types.objects!);
+        metadata.custom_types.scalars?.push(...custom_types.scalars!);
         return this;
     }
 

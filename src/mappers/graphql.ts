@@ -1,13 +1,25 @@
-import { DocumentNode, FieldDefinitionNode, InputValueDefinitionNode } from "graphql";
+import { DocumentNode, FieldDefinitionNode, InputValueDefinitionNode, TypeNode } from "graphql";
 import type * as Hasura from "hasura-metadata-types";
 import { GraphQlMetadataForAction } from "../types";
 
-function mapFields(values: readonly InputValueDefinitionNode[] | readonly FieldDefinitionNode[]): Hasura.InputArgument[] {
-    return values.map(value => ({
+function mapType(type: TypeNode): string {
+    if (type.kind === "NamedType") {
+        return type.name.value;
+    } else if (type.kind === "NonNullType") {
+        return mapType(type.type) + "!";
+    } else if (type.kind === "ListType") {
+        return "[" + mapType(type.type) + "]";
+    } else {
+        // @ts-ignore never?
+        throw new Error(`Invalid type ${type.kind}`);
+    }
+}
+
+function mapField(value: InputValueDefinitionNode | FieldDefinitionNode): Hasura.InputArgument {
+    return {
         name: value.name.value,
-        // @ts-ignore
-        type: value.type.kind === "NonNullType" ? value.type.type.name.value + "!" : value.type.name.value,
-    }));
+        type: mapType(value.type),
+    }
 }
 
 export function getGraphQLDefinitions(document: DocumentNode): GraphQlMetadataForAction {
@@ -16,6 +28,7 @@ export function getGraphQLDefinitions(document: DocumentNode): GraphQlMetadataFo
         custom_types: {
             input_objects: [],
             objects: [],
+            scalars: [],
         },
     };
     for (const definition of document.definitions) {
@@ -39,7 +52,7 @@ export function getGraphQLDefinitions(document: DocumentNode): GraphQlMetadataFo
                     definition: {
                         type,
                         output_type,
-                        arguments: mapFields(field.arguments || []),
+                        arguments: field.arguments?.map(mapField) || [],
                     }
                 })
             }
@@ -51,7 +64,14 @@ export function getGraphQLDefinitions(document: DocumentNode): GraphQlMetadataFo
             const type = definition.kind === "InputObjectTypeDefinition" ? "input_objects" : "objects";
             result.custom_types[type]!.push({
                 name: definition.name.value,
-                fields: mapFields(definition.fields || []),
+                fields: definition.fields?.map(mapField) || [],
+            })
+        }
+
+        // ScalarTypeDefinition
+        else if (definition.kind === "ScalarTypeDefinition") {
+            result.custom_types.scalars!.push({
+                name: definition.name.value,
             })
         }
 
