@@ -41,17 +41,11 @@ export function getGraphQLDefinitions(document: DocumentNode): GraphQlMetadataFo
                 if (type !== "query" as const && type !== "mutation" as const)
                     throw new Error(`Invalid type ${type} for field ${field.name.value}`);
 
-                let output_type: string;
-                if (field.type.kind === "NamedType") {
-                    output_type = field.type.name.value;
-                } else
-                    throw new Error(`Invalid type ${field.type.kind} for field ${field.name.value}`);
-
                 result.baseActions.push({
                     name: field.name.value,
                     definition: {
                         type,
-                        output_type,
+                        output_type: mapType(field.type),
                         arguments: field.arguments?.map(mapField) || [],
                     }
                 })
