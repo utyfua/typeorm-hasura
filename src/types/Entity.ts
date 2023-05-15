@@ -1,6 +1,6 @@
 import { ColumnMetadata } from "./Column";
 import { UserActionType, UserRoleName } from "./base";
-import { BasePermissionRule, SelectPermissionRule } from "./permissions";
+import { BasePermissionRule, InsertPermissionRule, SelectPermissionRule, UpdatePermissionRule } from "./permissions";
 import { Where } from "./whereClause";
 
 export type EntityTarget = any;
@@ -22,9 +22,11 @@ export type Permissions<Entity extends Object> = {
          * append where clause to all actions
          */
         where?: Where<Entity>;
+        insert?: InsertPermissionRule<Entity> | boolean;
         select?: SelectPermissionRule<Entity> | boolean;
+        update?: UpdatePermissionRule<Entity> | boolean;
     } & {
-        [action in Exclude<UserActionType, 'select'>]?: BasePermissionRule<Entity> | boolean;
+        [action in Exclude<UserActionType, 'select' | 'insert' | 'update'>]?: BasePermissionRule<Entity> | boolean;
     }
 }
 

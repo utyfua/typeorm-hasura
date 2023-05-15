@@ -45,18 +45,20 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "update"),
-                    filter: convertWhereClause<Entity>(table, where, update.where)
+                    filter: convertWhereClause<Entity>(table, where, update.where),
+                    check: convertWhereClause<Entity>(table, update.check),
+                    set: update.set
                 }
             })
         }
 
         if (insert) {
             if (insert === true) insert = {}
-            if (insert.where) throw new Error("u can not select while inserting something")
             result.insert_permissions.push({
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "insert"),
+                    check: convertWhereClause<Entity>(table, insert.check)
                 }
             })
         }
