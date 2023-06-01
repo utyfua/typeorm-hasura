@@ -30,12 +30,13 @@ export function generatePermissions<Entity extends Object = Object>(
 
         if (select) {
             if (select === true) select = {}
+            const limit = select.limit || dataSourceOptions.defaultSelectPermissionLimit
             result.select_permissions.push({
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "select"),
                     filter: convertWhereClause<Entity>(table, where, select.where),
-                    limit: select.limit || dataSourceOptions.defaultSelectPermissionLimit,
+                    ...(limit ? { limit } : {}),
                 }
             })
         }
@@ -46,8 +47,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 permission: {
                     columns: columnNames(columnMetadata, key, "update"),
                     filter: convertWhereClause<Entity>(table, where, update.where),
-                    check: convertWhereClause<Entity>(table, update.check),
-                    set: update.set
+                    ...(update.check ? { check: convertWhereClause<Entity>(table, update.check) } : {}),
+                    ...(update.set ? { set: update.set } : {})
                 }
             })
         }
