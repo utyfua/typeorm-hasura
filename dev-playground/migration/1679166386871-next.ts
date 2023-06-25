@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-const schema = process.env.DB_SCHEMA || "${schema}";
+const schema = process.env.DB_SCHEMA || "public";
 
 if (schema.includes('"') || schema.includes("'") || schema.includes("\\")) {
     throw new Error("Invalid schema name");
