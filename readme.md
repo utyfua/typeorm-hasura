@@ -1,8 +1,4 @@
-# typeorm-hasura
-
-[![npm version](https://badge.fury.io/js/typeorm-hasura.svg)](https://badge.fury.io/js/typeorm-hasura)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+# typeorm-hasura [![npm version](https://badge.fury.io/js/typeorm-hasura.svg)](https://badge.fury.io/js/typeorm-hasura) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 `typeorm-hasura` is a JavaScript library that generates Hasura metadata from TypeORM entities.
 This library is designed to automate the process of creating Hasura metadata, 
