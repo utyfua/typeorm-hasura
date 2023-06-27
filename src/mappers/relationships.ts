@@ -2,14 +2,20 @@ import * as TypeORM from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 
 type RelationshipKind = 'object_relationships' | 'array_relationships'
+type Relationship =
+    | Hasura.LocalTableObjectRelationship
+    | Hasura.SameTableObjectRelationship
+    | Hasura.ManualObjectRelationship
 
 export function generateRelationship(relation: TypeORM.EntityMetadata['relations'][number]): {
     kind: RelationshipKind,
-    relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship
+    relationship: Relationship
 } {
-    const kind = relation.relationType.endsWith('-to-one') ? 'object_relationships' : 'array_relationships';
+    const kind = relation.relationType.endsWith('-to-one') ?
+        'object_relationships' : 'array_relationships';
 
-    const owningRelation = relation.isOwning ? relation : relation.inverseRelation;
+    const owningRelation = relation.isOwning ?
+        relation : relation.inverseRelation;
 
     if (!owningRelation || relation.isManyToMany)
         throw new Error('Does not support many-to-many relations yet, so we will skip this specific relation. ' +
@@ -21,14 +27,19 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
     // const schema = owningRelation.entityMetadata.schema;
     // @ts-ignore is that okay?
     const schema = owningRelation.target.dataSource.options.schema || 'public';
+    const tableType = owningRelation.entityMetadata.tableType
 
-    const relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship =
-        relation.isOwning ? {
+    let relationship: Relationship
+
+    if (tableType === "regular" && relation.isOwning)
+        relationship = {
             name: relation.propertyName,
             using: {
                 foreign_key_constraint_on: columns.length === 1 ? columns[0] : columns
             }
-        } : {
+        }
+    else if (tableType === "regular" && !relation.isOwning)
+        relationship = {
             name: relation.propertyName,
             using: {
                 foreign_key_constraint_on: {
@@ -40,6 +51,26 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
                 }
             }
         }
+    else if (tableType === "view")
+        relationship = {
+            name: relation.propertyName,
+            using: {
+                manual_configuration: {
+                    column_mapping:
+                        relation.joinColumns.reduce((result, column) => (
+                            column.referencedColumn ?
+                                { ...result, [column.propertyName]: column.referencedColumn.propertyName } : result
+                        ), {}),
+                    insertion_order: null, // what's this?
+                    remote_table: {
+                        name: relation.inverseEntityMetadata.tableName,
+                        schema
+                    }
+                }
+            }
+        }
+    else
+        throw new Error("Relation tableType is not available")
 
     return { kind, relationship };
 }
