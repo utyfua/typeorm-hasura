@@ -2,14 +2,14 @@ import * as TypeORM from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 
 type RelationshipKind = 'object_relationships' | 'array_relationships'
+type Relationship =
+    | Hasura.LocalTableObjectRelationship
+    | Hasura.SameTableObjectRelationship
+    | Hasura.ManualObjectRelationship
 
-export function generateRelationship(relation: TypeORM.EntityMetadata['relations'][number]): {
-    kind: RelationshipKind,
-    relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship
-} {
-    const kind = relation.relationType.endsWith('-to-one') ? 'object_relationships' : 'array_relationships';
-
-    const owningRelation = relation.isOwning ? relation : relation.inverseRelation;
+export function generateRelationship(relation: TypeORM.EntityMetadata['relations'][number]): Relationship {
+    const owningRelation = relation.isOwning ?
+        relation : relation.inverseRelation;
 
     if (!owningRelation || relation.isManyToMany)
         throw new Error('Does not support many-to-many relations yet, so we will skip this specific relation. ' +
@@ -21,14 +21,17 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
     // const schema = owningRelation.entityMetadata.schema;
     // @ts-ignore is that okay?
     const schema = owningRelation.target.dataSource.options.schema || 'public';
+    const tableType = owningRelation.entityMetadata.tableType
 
-    const relationship: Hasura.LocalTableObjectRelationship | Hasura.SameTableObjectRelationship =
-        relation.isOwning ? {
+    if (tableType === "regular" && relation.isOwning)
+        return {
             name: relation.propertyName,
             using: {
                 foreign_key_constraint_on: columns.length === 1 ? columns[0] : columns
             }
-        } : {
+        }
+    else if (tableType === "regular" && !relation.isOwning)
+        return {
             name: relation.propertyName,
             using: {
                 foreign_key_constraint_on: {
@@ -40,8 +43,25 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
                 }
             }
         }
-
-    return { kind, relationship };
+    else if (tableType === "view")
+        return {
+            name: relation.propertyName,
+            using: {
+                manual_configuration: {
+                    column_mapping:
+                        Object.fromEntries(relation.joinColumns
+                            .filter(column => column.referencedColumn)
+                            .map(column => [column.propertyName, column.referencedColumn!.propertyName])),
+                    insertion_order: null, // what's this?
+                    remote_table: {
+                        name: relation.inverseEntityMetadata.tableName,
+                        schema
+                    }
+                }
+            }
+        }
+    else
+        throw new Error("Relation tableType is not available")
 }
 
 export function generateRelationships(relations: TypeORM.EntityMetadata['relations']):
@@ -56,7 +76,9 @@ export function generateRelationships(relations: TypeORM.EntityMetadata['relatio
 
     for (const relation of relations) {
         try {
-            const { kind, relationship } = generateRelationship(relation);
+            const kind = relation.relationType.endsWith('-to-one') ?
+                'object_relationships' : 'array_relationships';
+            const relationship = generateRelationship(relation);
             // @ts-ignore dont want to play with types for now
             result[kind].push(relationship);
         } catch (e) {

@@ -17,7 +17,7 @@ export function generateSource(dataSourceOptions: DataSourceOptions): Hasura.Sou
             // sort to be consistent with hasura
             .sort((a, b) => a.name.localeCompare(b.name))
             // we only want to generate tables for regular tables cuz we doesn't support another types
-            .filter(table => table.tableType === 'regular')
+            .filter(table => table.tableType === 'regular' || table.tableType === "view")
             .map(table => generateTable(dataSourceOptions, table)),
         customization,
         configuration: {
