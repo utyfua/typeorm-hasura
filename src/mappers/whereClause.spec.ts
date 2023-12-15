@@ -157,6 +157,22 @@ const cases: Case<User>[] = [
                 }
             }
         }
+    },
+    {
+        input: {
+            testJsonB: Not({
+                name: "test"
+            })
+        },
+        output: {
+            _not: {
+                testJsonB: {
+                    _contains: {
+                        name: "test"
+                    }
+                }
+            }
+        }
     }
 ]
 
