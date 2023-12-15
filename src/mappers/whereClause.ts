@@ -32,13 +32,17 @@ function parseParameters<Entity extends Object>(
         const column = table.columns.find(i => i.databaseName === key)
         const relation = table.relations.find(i => i.propertyName === key)
 
-        if (TypeORM.InstanceChecker.isFindOperator(parameterValue)) {
+        const isJsonb = column?.type === "jsonb" && typeof parameterValue == "object"
+
+        if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && !isJsonb) {
             conditions.push({ [key]: operatorMappers(parameterValue) })
         } else if (["string", "number", "boolean"].includes(typeof parameterValue)) {
             conditions.push({ [key]: { "_eq": parameterValue } })
         } else if (relation && parameterValue) {
             conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue) })
-        } else if (column?.type === "jsonb" && typeof parameterValue == "object" && !Array.isArray(parameterValue)) {
+        } else if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && parameterValue.type == "not" && isJsonb) {
+            conditions.push({ _not: { [key]: { "_contains": parameterValue.value } } })
+        } else if (isJsonb) {
             conditions.push({ [key]: { "_contains": parameterValue } })
         } else {
             throw new Error(`this parameter is not supported in this time`);
