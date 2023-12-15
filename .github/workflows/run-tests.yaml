@@ -1,9 +1,11 @@
 name: Test run
 on:
   push:
-    branches: [master]
+    branches: 
+      - master
   pull_request:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
   test:
@@ -15,7 +17,7 @@ jobs:
           node-version: 20
           cache: "npm"
       - name: "Install"
-        run: npm ci
+        run: npm install
       - name: "Build"
         run: npm run build
       - name: "Test"
