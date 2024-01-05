@@ -1,6 +1,6 @@
 {
   "name": "typeorm-hasura",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "",
   "keywords": [
     "hasura",
@@ -10,6 +10,7 @@
   "types": "./dist/src/index.d.ts",
   "files": [
     "dist",
+    "src",
     "LICENSE",
     "README.md"
   ],
@@ -29,11 +30,11 @@
     "typeorm": "typeorm-ts-node-esm",
     "test": "jest",
     "test:watch": "jest --watch",
-    "play:gen": "npx env-cmd npx typeorm-ts-node-esm migration:generate ./dev-playground/migration/next -d ./dev-playground/data-source",
-    "play:up": "npx env-cmd npx typeorm-ts-node-esm  migration:run -d ./dev-playground/data-source",
-    "play:down": "npx env-cmd npx typeorm-ts-node-esm  migration:revert -d ./dev-playground/data-source",
-    "play:start": "npx env-cmd ts-node dev-playground/index.ts",
-    "play:run": "npx env-cmd ts-node dev-playground/hasura.ts"
+    "play:gen": "npx env-cmd --silent npx typeorm-ts-node-esm migration:generate ./dev-playground/migration/next -d ./dev-playground/data-source",
+    "play:up": "npx env-cmd --silent npx typeorm-ts-node-esm migration:run -d ./dev-playground/data-source",
+    "play:down": "npx env-cmd --silent npx typeorm-ts-node-esm migration:revert -d ./dev-playground/data-source",
+    "play:start": "npx env-cmd --silent ts-node dev-playground/index.ts",
+    "play:hasura:apply": "npx env-cmd --silent ts-node dev-playground/hasura.ts"
   },
   "author": {
     "name": "Utyfua",
@@ -44,7 +45,7 @@
     "axios": "^1.3.5",
     "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
     "graphql-tag": "^2.0.0",
-    "hasura-metadata-types": "^2.26.0",
+    "hasura-metadata-types": "^2.22.1",
     "lodash.snakecase": "^4.1.1"
   },
   "peerDependencies": {

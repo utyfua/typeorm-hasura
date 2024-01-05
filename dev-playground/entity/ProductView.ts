@@ -1,7 +1,8 @@
-import { BaseEntity, DataSource, JoinColumn, ManyToOne, RelationId, ViewColumn, ViewEntity } from "typeorm";
+import { DataSource, JoinColumn, ManyToOne, RelationId, ViewColumn, ViewEntity } from "typeorm";
 import { HasuraColumn, HasuraEntity } from "../../src";
 import { UserRole } from "../UserRole";
 import { Org, UserView, Product } from ".";
+import { CustomBaseEntity } from "../CustomBaseEntity";
 
 @ViewEntity({
     name: 'ProductView',
@@ -22,7 +23,7 @@ import { Org, UserView, Product } from ".";
         }
     }
 })
-export class ProductView extends BaseEntity {
+export class ProductView extends CustomBaseEntity {
     @ViewColumn()
     @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     id!: string;

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { DocumentNode } from "graphql";
 import type * as Hasura from "hasura-metadata-types";
 import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
@@ -85,8 +85,8 @@ export class MetadataBuilder {
     }
 
     addGraphQLDefinitions(document: DocumentNode) {
-        const { custom_types,baseActions } = getGraphQLDefinitions(document);
-        if(baseActions?.length) {
+        const { custom_types, baseActions } = getGraphQLDefinitions(document);
+        if (baseActions?.length) {
             throw new Error("You should not add base actions throw addGraphQLDefinitions. Use addAction instead.");
         }
         this._pushCustomTypes(custom_types);
@@ -143,14 +143,29 @@ export class MetadataBuilder {
     */
     async applyMetadata({ hasuraUrl, adminSecret }: { hasuraUrl: string, adminSecret: string }) {
         const { metadata } = await this.getMetadata();
-        const { data } = await axios.post(`${hasuraUrl}/v1/metadata`, {
-            type: "replace_metadata",
-            args: metadata
-        }, {
-            headers: {
-                'X-Hasura-Admin-Secret': adminSecret
+        try {
+            const { data } = await axios.post(`${hasuraUrl}/v1/metadata`, {
+                type: "replace_metadata",
+                args: metadata
+            }, {
+                headers: {
+                    'X-Hasura-Admin-Secret': adminSecret
+                }
+            })
+            return data;
+        } catch (e) {
+            if (e instanceof AxiosError && e.response?.data) {
+                // TODO: Add a better error display.
+                const error = new Error(e.stack);
+                const data = e.response.data;
+                // @ts-ignore
+                error.data = data;
+                if (data.internal)
+                    // @ts-ignore
+                    error.internal = data.internal;
+                throw error;
             }
-        })
-        return data;
+            throw e;
+        }
     }
 }
