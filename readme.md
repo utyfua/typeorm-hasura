@@ -60,8 +60,10 @@ Here's a step-by-step guide on how to use typeorm-hasura:
     }
     ```
 
-    > [!IMPORTANT]
-    > `databaseUrl` should refer to the database that Hasura will use to connect to the database from inside the container of Hasura.
+    > [!IMPORTANT]  
+    > :warning:
+    > `databaseUrl` **should refer to the database that Hasura will use to connect to the database from inside the container of Hasura.**
+    >
     > You can omit `databaseUrl` if you are using the same database for Hasura and TypeORM.
 
 3. Save metadata:
