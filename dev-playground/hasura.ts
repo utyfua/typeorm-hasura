@@ -29,8 +29,18 @@ async function convert() {
         `tmp/output/metadata-${Date.now()}.json`,
         JSON.stringify(metadata, null, 2)
     )
-    AppDataSource.close();
-    console.log("Done and done");
+    AppDataSource.destroy();
+
+    if (!process.env.HASURA_URL) {
+        console.log('Done and done')
+        return;
+    }
+
+    const result = await generator.applyMetadata({
+        hasuraUrl: process.env.HASURA_URL,
+        adminSecret: process.env.HASURA_GRAPHQL_ADMIN_SECRET!
+    })
+    console.log(result)
 }
 
 AppDataSource.initialize()

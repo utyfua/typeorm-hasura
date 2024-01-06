@@ -5,12 +5,12 @@ import {
     OneToMany,
     ManyToOne,
     JoinColumn,
-    BaseEntity,
 } from 'typeorm';
 import { HasuraColumn, HasuraEntity } from '../../src';
 import { Org } from './Org';
 import { Product } from './Product';
 import { UserRole } from '../UserRole';
+import { CustomBaseEntity } from '../CustomBaseEntity';
 
 
 @Entity({ schema: 'public', name: 'User' })
@@ -27,7 +27,7 @@ import { UserRole } from '../UserRole';
         }
     }
 })
-export class User extends BaseEntity {
+export class User extends CustomBaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     id!: string;

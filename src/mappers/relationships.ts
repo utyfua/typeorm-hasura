@@ -11,16 +11,14 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
     const owningRelation = relation.isOwning ?
         relation : relation.inverseRelation;
 
-    if (!owningRelation || relation.isManyToMany)
-        throw new Error('Does not support many-to-many relations yet, so we will skip this specific relation. ' +
-            'Also its possible that you have missed to set inverse side of the relation.');
+    if (!owningRelation)
+        throw new Error('Unable to find owning relation. Probably you have missed to set inverse side of the relation.');
 
     const columns = owningRelation.joinColumns.map(column => column.databaseName);
 
-    // todo: does not work?
-    // const schema = owningRelation.entityMetadata.schema;
-    // @ts-ignore is that okay?
-    const schema = owningRelation.target.dataSource.options.schema || 'public';
+    // The schema doesn't defined for views by default but we can assume it's public
+    const schema = owningRelation.entityMetadata.schema || 'public';
+
     const tableType = owningRelation.entityMetadata.tableType
 
     if (tableType === "regular" && relation.isOwning)
@@ -75,16 +73,31 @@ export function generateRelationships(relations: TypeORM.EntityMetadata['relatio
     relations.sort((a, b) => a.propertyName.localeCompare(b.propertyName));
 
     for (const relation of relations) {
-        try {
-            const kind = relation.relationType.endsWith('-to-one') ?
-                'object_relationships' : 'array_relationships';
-            const relationship = generateRelationship(relation);
-            // @ts-ignore dont want to play with types for now
-            result[kind].push(relationship);
-        } catch (e) {
-            console.warn(e);
+        if (relation.isManyToMany) {
+            manyToManyWarning()
+            continue
         }
+
+        const kind = relation.relationType.endsWith('-to-one') ?
+            'object_relationships' : 'array_relationships';
+        const relationship = generateRelationship(relation);
+        // @ts-ignore dont want to play with types for now
+        result[kind].push(relationship);
     }
 
     return result;
+}
+
+let isManyToManyWarningShown = false
+function manyToManyWarning() {
+    if (isManyToManyWarningShown)
+        return
+
+    console.warn(new Error(
+        'Typeorm-hasura does not support many-to-many relations yet, so we will skip such relationships. ' +
+        'Also its possible that you have missed to set inverse side of the relation. ' +
+        'If you want to help us to support many-to-many relations, please create an issue on github.'
+    ));
+
+    isManyToManyWarningShown = true
 }

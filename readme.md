@@ -60,6 +60,12 @@ Here's a step-by-step guide on how to use typeorm-hasura:
     }
     ```
 
+    > [!IMPORTANT]  
+    > :warning:
+    > `databaseUrl` **should refer to the database that Hasura will use to connect to the database from inside the container of Hasura.**
+    >
+    > You can omit `databaseUrl` if you are using the same database for Hasura and TypeORM.
+
 3. Save metadata:
 
     a. Save metadata to a file:
@@ -80,7 +86,7 @@ Here's a step-by-step guide on how to use typeorm-hasura:
         // example: https://example.com
         // please do not put /v1/graphql at the end of the url
         hasuraUrl: process.env.HASURA_URL,
-        adminSecret : process.env.HASURA_ADMIN_SECRET
+        adminSecret : process.env.HASURA_GRAPHQL_ADMIN_SECRET
     })
     console.log(result)
     ```

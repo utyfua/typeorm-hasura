@@ -15,9 +15,9 @@ export function generateTable<Entity extends Object>(
     const metadata: Hasura.MetadataTable = {
         table: {
             name: table.tableName,
-            // todo: does not work?
-            // schema: table.schema,
-            schema: 'schema' in table.connection.options && table.connection.options.schema || 'public',
+            schema: table.schema
+                || ('schema' in table.connection.options && table.connection.options.schema)
+                || 'public',
         },
         configuration: generateTableConfiguration(table, entityWorkspace),
         ...generateRelationships(table.relations),

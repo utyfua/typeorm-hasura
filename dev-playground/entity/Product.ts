@@ -3,12 +3,12 @@ import {
     PrimaryGeneratedColumn,
     Column, ManyToOne,
     JoinColumn,
-    BaseEntity
 } from 'typeorm';
 import { HasuraColumn, HasuraEntity } from '../../src';
 import { User } from './User';
 import { Org } from "./Org";
 import { UserRole } from '../UserRole';
+import { CustomBaseEntity } from '../CustomBaseEntity';
 
 
 @Entity({ schema: 'public', name: 'Product' })
@@ -31,7 +31,7 @@ import { UserRole } from '../UserRole';
         }
     }
 })
-export class Product extends BaseEntity {
+export class Product extends CustomBaseEntity {
     @PrimaryGeneratedColumn('uuid')
     @HasuraColumn({
         permissions: {

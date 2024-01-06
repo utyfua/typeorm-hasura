@@ -9,6 +9,6 @@ dist/
 tmp/
 temp/
 
-.env
-.env.js
-.env.json
+/.env
+/.env.js
+/.env.json

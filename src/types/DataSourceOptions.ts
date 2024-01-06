@@ -7,10 +7,13 @@ export interface DataSourceOptions {
     customizationNative?: Hasura.SourceCustomization;
 
     /**
-     * override database url instead of url from data source
+     * Override database url instead of url from data source
+     * 
+     * Should refer to the database that Hasura will use to connect to the database from inside the container of Hasura.
+     * 
+     * Can omit if you are using the same database for Hasura and TypeORM.
      *
      * @example `postgres://username:password@host:5432/database`
-     * @deprecated please rely on the `dataSource` parameter instead
      */
     databaseUrl?: string;
 
