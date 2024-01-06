@@ -10,5 +10,5 @@
 		"HASURA_GRAPHQL_ADMIN_SECRET": "myadminsecretkey"
 	},
 	"forwardPorts": [3000, 5432, 8080],
-	"postAttachCommand": "nvm install && nvm use && npm run play:up && npm run play:hasura:apply"
+	"postAttachCommand": "nvm install && nvm use && npm i && npm run play:up && npm run play:hasura:apply"
 }
