@@ -6,6 +6,12 @@ export interface BasePermissionRule<Entity extends Object> {
 
 export interface InsertPermissionRule<Entity extends Object> {
     check?: Where<Entity>;
+    /**
+     * Column presets
+     * 
+     * if its a plain property it will be set to the value, but in another case you cannot use the value of the property
+     */
+    set?: Partial<Record<keyof Entity, unknown>>;
 }
 
 export interface SelectPermissionRule<Entity extends Object> {

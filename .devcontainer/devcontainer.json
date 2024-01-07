@@ -9,6 +9,6 @@
 		"HASURA_URL": "http://hasura:8080",
 		"HASURA_GRAPHQL_ADMIN_SECRET": "myadminsecretkey"
 	},
-	"forwardPorts": [3000, 5432, 8080],
+	"forwardPorts": [5432, 8080],
 	"postAttachCommand": "nvm install && nvm use && npm i && npm run play:up && npm run play:hasura:apply"
 }

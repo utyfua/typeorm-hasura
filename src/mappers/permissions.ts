@@ -59,7 +59,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "insert"),
-                    check: convertWhereClause<Entity>(table, insert.check)
+                    ...(insert.check ? { check: convertWhereClause<Entity>(table, insert.check) } : {}),
+                    ...(insert.set ? { set: insert.set } : {})
                 }
             })
         }
