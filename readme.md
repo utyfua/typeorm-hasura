@@ -1,6 +1,7 @@
-# typeorm-hasura [![npm version](https://badge.fury.io/js/typeorm-hasura.svg)](https://badge.fury.io/js/typeorm-hasura) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# typeorm-hasura
 
 `typeorm-hasura` is a JavaScript library that generates Hasura metadata from TypeORM entities.
+
 This library is designed to automate the process of creating Hasura metadata, 
 making it easier to manage complex database schemas and permissions when using Hasura with TypeORM.
 
@@ -10,6 +11,12 @@ making it easier to manage complex database schemas and permissions when using H
 - Define permissions for each entity and column
 - Add custom actions and inherited roles
 - Automatic handling of relationships between entities
+
+> [!WARNING]  
+> The library does not support ManyToMany relationships.
+
+> [!NOTE]
+> The library was tested with Hasura v2 and TypeORM v0.3 with PostgreSQL only.
 
 ## Installation
 
