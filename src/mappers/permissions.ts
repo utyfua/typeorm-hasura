@@ -36,7 +36,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 permission: {
                     columns: columnNames(columnMetadata, key, "select"),
                     filter: convertWhereClause<Entity>(table, where, select.where),
-                    ...(limit ? { limit } : {}),
+                    limit,
+                    allow_aggregations: select.allowAggregations,
                 }
             })
         }
@@ -47,8 +48,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 permission: {
                     columns: columnNames(columnMetadata, key, "update"),
                     filter: convertWhereClause<Entity>(table, where, update.where),
-                    ...(update.check ? { check: convertWhereClause<Entity>(table, update.check) } : {}),
-                    ...(update.set ? { set: update.set } : {})
+                    check: convertWhereClause<Entity>(table, update.check),
+                    set: update.set
                 }
             })
         }
@@ -59,8 +60,8 @@ export function generatePermissions<Entity extends Object = Object>(
                 role: key,
                 permission: {
                     columns: columnNames(columnMetadata, key, "insert"),
-                    ...(insert.check ? { check: convertWhereClause<Entity>(table, insert.check) } : {}),
-                    ...(insert.set ? { set: insert.set } : {})
+                    check: convertWhereClause<Entity>(table, insert.check),
+                    set: insert.set
                 }
             })
         }
