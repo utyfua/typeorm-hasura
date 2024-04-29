@@ -39,7 +39,8 @@ function parseParameters<Entity extends Object>(
         } else if (["string", "number", "boolean"].includes(typeof parameterValue)) {
             conditions.push({ [key]: { "_eq": parameterValue } })
         } else if (relation && parameterValue) {
-            conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue) })
+            // this is a relation so we can parse it recursively
+            conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue as TypeORM.FindOptionsWhere<Entity>) })
         } else if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && parameterValue.type == "not" && isJsonb) {
             conditions.push({ _not: { [key]: { "_contains": parameterValue.value } } })
         } else if (isJsonb) {
