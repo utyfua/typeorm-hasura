@@ -72,10 +72,12 @@ const cases: Cases<User>[] = [
             select_permissions: [{
                 role: "user",
                 permission: {
+                    allow_aggregations: undefined,
                     columns: ["id"],
                     filter: {
                         id: { _eq: "1" }
-                    }
+                    },
+                    limit: undefined
                 }
             }],
             update_permissions: [],
@@ -99,19 +101,23 @@ const cases: Cases<User>[] = [
             select_permissions: [{
                 role: "user",
                 permission: {
+                    allow_aggregations: undefined,
                     columns: ["id"],
                     filter: {
                         id: { _eq: "1" }
-                    }
+                    },
+                    limit: undefined
                 }
             }],
             update_permissions: [{
                 role: "user",
                 permission: {
+                    check: {},
                     columns: ["id"],
                     filter: {
                         id: { _eq: "1" }
-                    }
+                    },
+                    set: undefined
                 }
             }],
             delete_permissions: [],
@@ -140,15 +146,18 @@ const cases: Cases<User>[] = [
             select_permissions: [{
                 role: "user",
                 permission: {
+                    allow_aggregations: undefined,
                     columns: ["id"],
                     filter: {
                         id: { _eq: "1" }
-                    }
+                    },
+                    limit: undefined
                 }
             }],
             update_permissions: [{
                 role: "user",
                 permission: {
+                    check: {},
                     columns: ["id"],
                     filter: {
                         _and: [
@@ -159,7 +168,8 @@ const cases: Cases<User>[] = [
                                 }
                             }
                         ]
-                    }
+                    },
+                    set: undefined
                 }
             }],
             delete_permissions: [],
