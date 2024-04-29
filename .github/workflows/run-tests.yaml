@@ -1,8 +1,9 @@
 name: Test run
 on:
   push:
-    branches: 
+    branches:
       - master
+      - playground-*
   pull_request:
     branches:
       - master
@@ -10,13 +11,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nodeVersion: [20, 22]
+        typeormVersion: [0.3.12, 0.3.14, 0.3.17, 0.3.19, 0.3.20]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.nodeVersion }}
       - name: "Install"
-        run: npm install
+        run: npm install --no-save typeorm@${{ matrix.typeormVersion }}
       - name: "Build"
         run: npm run build
       - name: "Test"
