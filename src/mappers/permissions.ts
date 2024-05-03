@@ -76,6 +76,12 @@ export function generatePermissions<Entity extends Object = Object>(
             })
         }
     }
+
+    //  sort to make sure the order is consistent
+    (["insert_permissions", "select_permissions", "update_permissions", "delete_permissions"] as const).forEach(key => {
+        result[key].sort((a, b) => a.role.localeCompare(b.role))
+    })
+
     return result
 }
 
