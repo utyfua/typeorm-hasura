@@ -1,5 +1,6 @@
 name: Test run
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -27,7 +28,7 @@ jobs:
           POSTGRES_DB: postgres
 
       hasura:
-        image: hasura/graphql-engine:v2.36.1
+        image: hasura/graphql-engine:latest
         ports:
           - "8080:8080"
         env:
