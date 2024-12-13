@@ -154,6 +154,20 @@ Here's a step-by-step guide on how to use typeorm-hasura:
 
 6. Now, you can use typeorm-hasura to automatically generate Hasura metadata for your TypeORM entities.
 
+## Dev container with GitHub Codespaces
+
+You can run our [developer playground](https://github.com/utyfua/typeorm-hasura/tree/master/dev-playground) 
+simple and safe with GitHub Codespaces from the [repository](https://github.com/utyfua/typeorm-hasura).
+
+![How to open Dev container with GitHub Codespaces](docs/images/github-codespaces/start.jpg)
+
+> [!WARNING]
+> If you are using Visual Studio Code as a local desktop application (not in a web browser) to forward the Hasura Console port
+> and you want to test Subscriptions, you need to change the forwarded port from 8080 to 80 manually,
+> otherwise, the Hasura Console will not work properly.
+> ![How to change the forwarded port](docs/images/github-codespaces/change-port.jpg)
+
+
 ## Contributing
 
 We appreciate your help in improving the "typeorm-hasura" library.
