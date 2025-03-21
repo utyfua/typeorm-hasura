@@ -19,11 +19,16 @@ import { CustomBaseEntity } from '../CustomBaseEntity';
             where: [
                 { userId: 'X-Hasura-User-Id' },
                 {
-                    org: {
-                        users: {
-                            id: 'X-Hasura-User-Id'
+                    org: [
+                        {
+                            users: {
+                                id: 'X-Hasura-User-Id'
+                            }
+                        },
+                        {
+                            isPublic: true
                         }
-                    }
+                    ]
                 }
             ],
             select: true,

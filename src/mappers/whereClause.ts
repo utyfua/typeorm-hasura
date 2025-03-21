@@ -1,5 +1,5 @@
 import * as TypeORM from "typeorm";
-import { Where, Filter } from "../types";
+import { Where, Filter, FilterAlt, ExclusiveParameters } from "../types";
 import { operatorMappers } from "./operators";
 
 export function convertWhereClause<Entity extends Object>(
@@ -16,19 +16,20 @@ export function convertWhereClause<Entity extends Object>(
     const [where] = wheres
 
     if (!where) return {}
-    if (Array.isArray(where)) {
-        return { _or: where.map(i => parseParameters(table, i)) }
-    }
     return parseParameters(table, where)
 }
 
 function parseParameters<Entity extends Object>(
     table: TypeORM.EntityMetadata,
-    object: TypeORM.FindOptionsWhere<Entity>
+    where: TypeORM.FindOptionsWhere<Entity> | TypeORM.FindOptionsWhere<Entity>[]
 ): Filter<Entity> {
-    let conditions: Filter<Entity>[] = []
-    for (let key in object) {
-        const parameterValue = object[key]
+    if (Array.isArray(where)) {
+        return { _or: where.map(i => parseParameters(table, i)) }
+    }
+
+    let conditions: (FilterAlt | ExclusiveParameters)[] = []
+    for (let key in where) {
+        const parameterValue = where[key]
         const column = table.columns.find(i => i.databaseName === key)
         const relation = table.relations.find(i => i.propertyName === key)
 
@@ -36,7 +37,11 @@ function parseParameters<Entity extends Object>(
 
         if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && !isJsonb) {
             conditions.push({ [key]: operatorMappers(parameterValue) })
-        } else if (["string", "number", "boolean"].includes(typeof parameterValue)) {
+        } else if (
+            typeof parameterValue === "string" ||
+            typeof parameterValue === "number" ||
+            typeof parameterValue === "boolean"
+        ) {
             conditions.push({ [key]: { "_eq": parameterValue } })
         } else if (relation && parameterValue) {
             // this is a relation so we can parse it recursively
@@ -50,6 +55,6 @@ function parseParameters<Entity extends Object>(
         }
     }
     return conditions.length == 0 ? {} :
-        conditions.length == 1 ? conditions[0] :
-            { _and: conditions }
+        conditions.length == 1 ? conditions[0] as Filter<Entity> :
+            { _and: conditions } as Filter<Entity>
 }

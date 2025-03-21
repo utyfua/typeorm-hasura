@@ -43,6 +43,9 @@ export class Org extends CustomBaseEntity {
     })
     name!: string;
 
+    @Column({ type: 'boolean', nullable: true })
+    isPublic!: boolean;
+
     @OneToMany(() => User, (user) => user.org)
     users!: User[];
 

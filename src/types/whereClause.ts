@@ -2,9 +2,6 @@ import { FindOptionsWhere, FindOperatorType, BaseEntity } from "typeorm";
 
 export type Where<Entity> = FindOptionsWhere<Entity>[] | FindOptionsWhere<Entity>
 
-export type ExclusiveKeys<T extends {}, Key = { [K in keyof T]: { [P in keyof T]?: P extends K ? T[P] : never } }> =
-    { [K in keyof Key]: Key[K] }[keyof Key];
-
 type StringParameters =
     | "_eq"
     | "_neq"
@@ -39,23 +36,25 @@ type JsonBParameters =
 // | "_has_key"
 // | "_has_keys_any"
 // | "_has_keys_all"
-export type ExclusiveParameters = ExclusiveKeys<
-    { [key in StringParameters]?: string; } &
+export type ExclusiveParameters =
+    { [key in StringParameters]?: string | number | boolean; } &
     { [key in ArrayParameters]?: string[] } &
     { [key in NullParameters]?: boolean } &
     { [key in JsonBParameters]?: Object }
->
-type Subject<Entity extends Object> = {
-    [key in keyof Entity]?: ExclusiveParameters
-}
-export type ExclusiveArguments<Entity extends Object, T = {}, EntityParameters extends string | number | symbol = keyof Omit<Entity, keyof BaseEntity>> =
-    ExclusiveKeys<{ [key in EntityParameters]?: ExclusiveParameters | Subject<Entity> } & T>
 
-export type Filter<EntityParameters extends Object> = ExclusiveKeys<{
-    _and?: Filter<EntityParameters>[];
-    _or?: Filter<EntityParameters>[];
-    _not?: Filter<EntityParameters>
-}> | ExclusiveArguments<EntityParameters>
+export type StripBaseEntity<Entity extends Object> = Omit<Entity, keyof BaseEntity>
+
+export type Filter<Entity extends any> = {
+    _and?: Filter<Entity>[];
+    _or?: Filter<Entity>[];
+    _not?: Filter<Entity>
+} & {
+    [key in keyof Entity]?: Filter<Entity[key] extends Array<infer U> ? U : Entity[key]> | ExclusiveParameters
+}
+
+export type FilterAlt = {
+    [key: string]: ExclusiveParameters | FilterAlt;
+}
 
 export const Operators: Readonly<
     Partial<Record<FindOperatorType, StringParameters | ArrayParameters | NullParameters>>

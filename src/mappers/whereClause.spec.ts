@@ -1,7 +1,7 @@
-import { Equal, Not, MoreThan, LessThan, MoreThanOrEqual, LessThanOrEqual, Like, ILike, In, BaseEntity, IsNull, And, EntityMetadata } from "typeorm"
+import { Not, In, BaseEntity, IsNull, EntityMetadata } from "typeorm"
 
 import { convertWhereClause } from "./whereClause"
-import { User, Org, Product } from "../../dev-playground/entity";
+import { User } from "../../dev-playground/entity";
 import { Where, Filter } from "../types";
 
 type Case<T extends BaseEntity> = {
@@ -91,7 +91,6 @@ const cases: Case<User>[] = [
             _or: [
                 { _and: [{ id: { _neq: "1" } }, { name: { _eq: "test" } }] },
                 { _and: [{ id: { _eq: "2" } }, { name: { _in: ["test"] } }] }
-
             ],
 
         },
@@ -105,6 +104,26 @@ const cases: Case<User>[] = [
         output: {
             products: {
                 id: { _eq: "1" },
+            }
+        }
+    },
+    {
+        input: {
+            products: [
+                {
+                    id: "1"
+                },
+                {
+                    id: "2"
+                }
+            ]
+        },
+        output: {
+            products: {
+                _or: [
+                    { id: { _eq: "1" } },
+                    { id: { _eq: "2" } }
+                ]
             }
         }
     },
