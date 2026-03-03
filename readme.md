@@ -16,7 +16,7 @@ making it easier to manage complex database schemas and permissions when using H
 > The library does not support ManyToMany relationships.
 
 > [!NOTE]
-> The library was tested with Hasura v2 and TypeORM v0.3 with PostgreSQL only.
+> The library was tested with Hasura v2 and TypeORM v0.3/v1-nightly with PostgreSQL only.
 
 ## Installation
 

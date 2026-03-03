@@ -9,10 +9,6 @@
 		"HASURA_URL": "http://hasura:8080",
 		"HASURA_GRAPHQL_ADMIN_SECRET": "myadminsecretkey"
 	},
-	"forwardPorts": [
-		5432,
-		8080
-	],
 	"portsAttributes": {
 		"5432": {
 			"label": "Postgres"
@@ -22,5 +18,5 @@
 			"onAutoForward": "notify"
 		}
 	},
-	"postAttachCommand": "nvm install && nvm use && npm i && npm run play:up && npm run play:hasura:apply"
+	"postAttachCommand": "npm i && npm run play:up && npm run play:hasura:apply"
 }
