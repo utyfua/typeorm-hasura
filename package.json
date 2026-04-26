@@ -1,6 +1,6 @@
 {
   "name": "typeorm-hasura",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "",
   "keywords": [
     "hasura",
@@ -24,11 +24,10 @@
     "url": "https://github.com/utyfua/typeorm-hasura/issues"
   },
   "scripts": {
-    "prepublish": "run-s build:tsc",
-    "clean": "rimraf -g dist/*",
-    "prebuild": "run-s clean",
-    "build": "run-s build:tsc",
-    "build:tsc": "tsc --module commonjs",
+    "prepublish": "run-s build",
+    "prebuild": "rimraf -g dist/*",
+    "build": "tsc --module commonjs",
+    "pretest": "run-s build",
     "test": "jest",
     "test:watch": "jest --watch",
     "play:gen": "npx env-cmd --silent npx typeorm-ts-node-commonjs migration:generate ./dev-playground/migration/next -d ./dev-playground/data-source.ts",
@@ -53,7 +52,7 @@
     "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
     "graphql-tag": "^2.0.0",
     "hasura-metadata-types": "^2.22.1",
-    "typeorm": "^0.3.0 || ^1.0.0 || master"
+    "typeorm": "^0.3.0 || ^1.0.0 || >=1.0.0-nightly.0 <1.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
@@ -67,6 +66,7 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typeorm": "^0.3.14"
+    "typeorm": "^0.3.14",
+    "typescript": "^5.9.3"
   }
 }
