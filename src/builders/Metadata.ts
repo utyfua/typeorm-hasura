@@ -1,5 +1,4 @@
-import axios, { AxiosError } from "axios";
-import { DocumentNode } from "graphql";
+import type { DocumentNode } from "graphql";
 import type * as Hasura from "hasura-metadata-types";
 import { ActionBuildResult, DataSourceOptions, InheritedRoles } from "../types";
 import { generateSource } from "../mappers";
@@ -143,6 +142,7 @@ export class MetadataBuilder {
     */
     async applyMetadata({ hasuraUrl, adminSecret }: { hasuraUrl: string, adminSecret: string }) {
         const { metadata } = await this.getMetadata();
+        const { default: axios, AxiosError } = await import("axios");
         try {
             const { data } = await axios.post(`${hasuraUrl}/v1/metadata`, {
                 type: "replace_metadata",

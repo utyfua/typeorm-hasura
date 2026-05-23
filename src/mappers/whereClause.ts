@@ -1,9 +1,10 @@
-import * as TypeORM from "typeorm";
+import { InstanceChecker } from "typeorm";
+import type { EntityMetadata, FindOptionsWhere } from "typeorm";
 import { Where, Filter, FilterAlt, ExclusiveParameters } from "../types";
 import { operatorMappers } from "./operators";
 
 export function convertWhereClause<Entity extends Object>(
-    table: TypeORM.EntityMetadata,
+    table: EntityMetadata,
     ...wheres: (Where<Entity> | undefined)[]
 ): Filter<Entity> {
     wheres = wheres.filter(Boolean)
@@ -20,8 +21,8 @@ export function convertWhereClause<Entity extends Object>(
 }
 
 function parseParameters<Entity extends Object>(
-    table: TypeORM.EntityMetadata,
-    where: TypeORM.FindOptionsWhere<Entity> | TypeORM.FindOptionsWhere<Entity>[]
+    table: EntityMetadata,
+    where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]
 ): Filter<Entity> {
     if (Array.isArray(where)) {
         return { _or: where.map(i => parseParameters(table, i)) }
@@ -35,7 +36,7 @@ function parseParameters<Entity extends Object>(
 
         const isJsonb = column?.type === "jsonb" && typeof parameterValue == "object"
 
-        if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && !isJsonb) {
+        if (InstanceChecker.isFindOperator(parameterValue) && !isJsonb) {
             conditions.push({ [key]: operatorMappers(parameterValue) })
         } else if (
             typeof parameterValue === "string" ||
@@ -45,8 +46,8 @@ function parseParameters<Entity extends Object>(
             conditions.push({ [key]: { "_eq": parameterValue } })
         } else if (relation && parameterValue) {
             // this is a relation so we can parse it recursively
-            conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue as TypeORM.FindOptionsWhere<Entity>) })
-        } else if (TypeORM.InstanceChecker.isFindOperator(parameterValue) && parameterValue.type == "not" && isJsonb) {
+            conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue as FindOptionsWhere<Entity>) })
+        } else if (InstanceChecker.isFindOperator(parameterValue) && parameterValue.type == "not" && isJsonb) {
             conditions.push({ _not: { [key]: { "_contains": parameterValue.value } } })
         } else if (isJsonb) {
             conditions.push({ [key]: { "_contains": parameterValue } })

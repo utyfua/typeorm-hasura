@@ -1,4 +1,4 @@
-import { DocumentNode } from "graphql"
+import type { DocumentNode } from "graphql"
 import type * as Hasura from "hasura-metadata-types";
 import { UserRoleName } from "./base";
 

@@ -1,9 +1,9 @@
-import * as TypeORM from "typeorm";
+import type { DataSource } from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 
 export interface DataSourceOptions {
     name: string;
-    dataSource: TypeORM.DataSource;
+    dataSource: DataSource;
     customizationNative?: Hasura.SourceCustomization;
 
     /**

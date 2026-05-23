@@ -1,4 +1,4 @@
-import * as TypeORM from "typeorm";
+import type { EntityMetadata } from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 import { ColumnMetadata, DataSourceOptions, EntityInternalStorageWorkspace, UserActionType } from "../types";
 import { convertWhereClause } from "./whereClause"
@@ -9,7 +9,7 @@ export type PermissionResult = Required<Pick<
 
 export function generatePermissions<Entity extends Object = Object>(
     dataSourceOptions: DataSourceOptions,
-    table: TypeORM.EntityMetadata,
+    table: EntityMetadata,
     { entityOptions, columnMetadata }: EntityInternalStorageWorkspace<Entity>,
 ): PermissionResult {
 

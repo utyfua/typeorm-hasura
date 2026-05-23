@@ -1,5 +1,5 @@
 import type * as Hasura from "hasura-metadata-types";
-import * as TypeORM from "typeorm";
+import type { EntityMetadata } from "typeorm";
 import { generateRelationships } from "./relationships";
 import { generateTableConfiguration } from "./tableConfiguration";
 import { DataSourceOptions } from "../types";
@@ -8,7 +8,7 @@ import { internalStorage } from "../internalStorage";
 
 export function generateTable<Entity extends Object>(
     dataSourceOptions: DataSourceOptions,
-    table: TypeORM.EntityMetadata
+    table: EntityMetadata
 ): Hasura.MetadataTable {
     const entityWorkspace = internalStorage.getEntityWorkspace<Entity>(table.target);
 

@@ -1,4 +1,4 @@
-import { FindOperator } from "typeorm"
+import type { FindOperator } from "typeorm"
 import { ExclusiveParameters, Operators } from "../types"
 
 export function operatorMappers(operator: FindOperator<any>): ExclusiveParameters {

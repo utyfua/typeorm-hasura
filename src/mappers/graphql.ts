@@ -1,4 +1,4 @@
-import { DocumentNode, FieldDefinitionNode, InputValueDefinitionNode, TypeNode } from "graphql";
+import type { DocumentNode, FieldDefinitionNode, InputValueDefinitionNode, TypeNode } from "graphql";
 import type * as Hasura from "hasura-metadata-types";
 import { GraphQlMetadataForAction } from "../types";
 

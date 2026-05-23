@@ -1,4 +1,4 @@
-import * as TypeORM from "typeorm";
+import type { EntityMetadata } from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 
 type RelationshipKind = 'object_relationships' | 'array_relationships'
@@ -7,7 +7,7 @@ type Relationship =
     | Hasura.SameTableObjectRelationship
     | Hasura.ManualObjectRelationship
 
-export function generateRelationship(relation: TypeORM.EntityMetadata['relations'][number]): Relationship {
+export function generateRelationship(relation: EntityMetadata['relations'][number]): Relationship {
     const owningRelation = relation.isOwning ?
         relation : relation.inverseRelation;
 
@@ -62,7 +62,7 @@ export function generateRelationship(relation: TypeORM.EntityMetadata['relations
         throw new Error("Relation tableType is not available")
 }
 
-export function generateRelationships(relations: TypeORM.EntityMetadata['relations']):
+export function generateRelationships(relations: EntityMetadata['relations']):
     Pick<Hasura.MetadataTable, RelationshipKind> {
     const result: Required<Pick<Hasura.MetadataTable, RelationshipKind>> = {
         object_relationships: [],

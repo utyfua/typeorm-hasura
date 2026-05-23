@@ -1,4 +1,4 @@
-import { FindOptionsWhere, FindOperatorType, BaseEntity } from "typeorm";
+import type { FindOptionsWhere, FindOperatorType, BaseEntity } from "typeorm";
 
 export type Where<Entity> = FindOptionsWhere<Entity>[] | FindOptionsWhere<Entity>
 

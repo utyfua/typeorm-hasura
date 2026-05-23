@@ -1,10 +1,10 @@
-import * as TypeORM from "typeorm";
+import { EntityMetadata } from "typeorm";
 import type * as Hasura from "hasura-metadata-types";
 import { EntityInternalStorageWorkspace, EntityRootField } from "../types";
-import snakeCase from 'lodash.snakecase'
+import snakeCase from 'lodash-es/snakeCase'
 
 export function generateTableConfiguration<Entity extends Object>(
-    table: TypeORM.EntityMetadata,
+    table: EntityMetadata,
     { entityOptions, columnMetadata }: EntityInternalStorageWorkspace<Entity>,
 ): Hasura.MetadataTableConfig {
 
