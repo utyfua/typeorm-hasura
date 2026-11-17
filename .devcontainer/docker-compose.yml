@@ -30,7 +30,7 @@ services:
       - default
 
   app:
-    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bullseye
+    image: mcr.microsoft.com/devcontainers/typescript-node:24
     depends_on:
       - db
       - hasura

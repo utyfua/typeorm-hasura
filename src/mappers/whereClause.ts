@@ -1,7 +1,7 @@
 import { InstanceChecker } from "typeorm";
 import type { EntityMetadata, FindOptionsWhere } from "typeorm";
-import { Where, Filter, FilterAlt, ExclusiveParameters } from "../types";
-import { operatorMappers } from "./operators";
+import { Where, Filter, FilterAlt, FilterBaseParameters } from "../types";
+import { mapOperator } from "./operators";
 
 export function convertWhereClause<Entity extends Object>(
     table: EntityMetadata,
@@ -28,7 +28,7 @@ function parseParameters<Entity extends Object>(
         return { _or: where.map(i => parseParameters(table, i)) }
     }
 
-    let conditions: (FilterAlt | ExclusiveParameters)[] = []
+    let conditions: (FilterAlt | FilterBaseParameters)[] = []
     for (let key in where) {
         const parameterValue = where[key]
         const column = table.columns.find(i => i.databaseName === key)
@@ -36,21 +36,27 @@ function parseParameters<Entity extends Object>(
 
         const isJsonb = column?.type === "jsonb" && typeof parameterValue == "object"
 
-        if (InstanceChecker.isFindOperator(parameterValue) && !isJsonb) {
-            conditions.push({ [key]: operatorMappers(parameterValue) })
+        if (InstanceChecker.isFindOperator(parameterValue)) {
+            if (isJsonb) {
+                if (parameterValue.type == "not" && !parameterValue.child) {
+                    conditions.push({ _not: { [key]: { "_contains": parameterValue.value } } })
+                } else {
+                    throw new Error(`"${parameterValue.child?.type || parameterValue.type}" operator is not supported for jsonb column`);
+                }
+            } else {
+                conditions.push({ [key]: mapOperator(parameterValue) })
+            }
         } else if (
             typeof parameterValue === "string" ||
             typeof parameterValue === "number" ||
             typeof parameterValue === "boolean"
         ) {
             conditions.push({ [key]: { "_eq": parameterValue } })
+        } else if (isJsonb) {
+            conditions.push({ [key]: { "_contains": parameterValue } })
         } else if (relation && parameterValue) {
             // this is a relation so we can parse it recursively
             conditions.push({ [key]: parseParameters(relation.inverseEntityMetadata, parameterValue as FindOptionsWhere<Entity>) })
-        } else if (InstanceChecker.isFindOperator(parameterValue) && parameterValue.type == "not" && isJsonb) {
-            conditions.push({ _not: { [key]: { "_contains": parameterValue.value } } })
-        } else if (isJsonb) {
-            conditions.push({ [key]: { "_contains": parameterValue } })
         } else {
             throw new Error(`this parameter is not supported in this time`);
         }

@@ -6,7 +6,7 @@ import {
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
-import { HasuraColumn, HasuraEntity } from '../../src';
+import { AnyJSONB, HasuraColumn, HasuraEntity } from '../../src';
 import { Org } from './Org';
 import { Product } from './Product';
 import { UserRole } from '../UserRole';
@@ -36,12 +36,20 @@ export class User extends CustomBaseEntity {
     @HasuraColumn({ permissions: { [UserRole.user]: ['select', 'update'] } })
     name!: string;
 
+    @Column({ type: 'varchar', array: true, nullable: true })
+    @HasuraColumn({
+        permissions: {
+            [UserRole.user]: ['select', 'update']
+        }
+    })
+    aliases!: string[] | null;
+
     @Column({ name: 'orgId', type: 'uuid', nullable: true })
     @HasuraColumn({ permissions: { [UserRole.user]: ['select'] } })
     orgId!: string;
 
     @Column({ type: 'jsonb', nullable: true })
-    testJsonB!: object
+    testJsonB!: AnyJSONB
 
     @ManyToOne(() => Org, (org) => org.users)
     @JoinColumn({ name: 'orgId' })

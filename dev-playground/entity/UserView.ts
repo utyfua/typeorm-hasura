@@ -1,5 +1,5 @@
 import { DataSource, ManyToOne, OneToMany, RelationId, ViewColumn, ViewEntity } from "typeorm";
-import { HasuraColumn, HasuraEntity } from "../../src";
+import { AnyJSONB, HasuraColumn, HasuraEntity } from "../../src";
 import { UserRole } from "../UserRole";
 import { Org, User, ProductView } from ".";
 import { CustomBaseEntity } from "../CustomBaseEntity";
@@ -38,7 +38,7 @@ export class UserView extends CustomBaseEntity {
   orgId!: string;
 
   @ViewColumn()
-  testJsonB!: object
+  testJsonB!: AnyJSONB
 
   @ManyToOne(() => Org)
   org!: Org;

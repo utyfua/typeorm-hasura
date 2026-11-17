@@ -12,11 +12,11 @@ making it easier to manage complex database schemas and permissions when using H
 - Add custom actions and inherited roles
 - Automatic handling of relationships between entities
 
-> [!WARNING]  
+> [!CAUTION]  
 > The library does not support ManyToMany relationships.
 
-> [!NOTE]
-> The library was tested with Hasura v2 and TypeORM v0.3/v1-nightly.20260426 with PostgreSQL only.
+> [!NOTE]  
+> The library was tested with Hasura v2 and TypeORM v0.3/v1 with PostgreSQL only.
 
 ## Installation
 

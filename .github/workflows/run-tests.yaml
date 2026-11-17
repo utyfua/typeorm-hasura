@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        nodeVersion: [20, 22]
-        typeormVersion: [0.3.28, "0.3", "1", latest, dev]
+        nodeVersion: [22, 24, 26]
+        typeormVersion: [0.3.31, "0.3", "1.0", "1.1", latest, dev]
       fail-fast: false
     services:
       db:

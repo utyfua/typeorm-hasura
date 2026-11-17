@@ -1,14 +1,18 @@
-node_modules/
-package-lock.json
+/node_modules/
+/package-lock.json
+/yarn.lock
+/bun.lock
 
-.idea/
-.vscode/
+/.idea/
+/.vscode/
 
-build/
-dist/
-tmp/
-temp/
+/build/
+/dist/
+/tmp/
+/temp/
 
 /.env
 /.env.js
 /.env.json
+
+/typeorm-hasura-*.tgz

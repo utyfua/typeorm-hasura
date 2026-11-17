@@ -1,9 +1,31 @@
-import type { FindOperator } from "typeorm"
-import { ExclusiveParameters, Operators } from "../types"
+import type { FindOperator, FindOperatorType } from "typeorm"
+import type { ArrayOperators, FilterBaseParameters, NullOperator, StringOperators } from "../types"
 
-export function operatorMappers(operator: FindOperator<any>): ExclusiveParameters {
+const OperatorsMap = {
+    // string
+    "equal": "_eq",
+    "not": "_neq",
+    "moreThan": "_gt",
+    "lessThan": "_lt",
+    "moreThanOrEqual": "_gte",
+    "lessThanOrEqual": "_lte",
+    "like": "_like",
+    "ilike": "_ilike",
+    // array
+    "in": "_in",
+    "arrayContains": "_contains",
+    "isNull": "_is_null",
+} satisfies Readonly<
+    Partial<Record<FindOperatorType, StringOperators | ArrayOperators | NullOperator | "_contains">>
+>
+
+function isMappedOperator(type: string): type is keyof typeof OperatorsMap {
+    return type in OperatorsMap
+}
+
+export function mapOperator(operator: FindOperator<any>): FilterBaseParameters {
     const { type } = operator
-    if (!(type in Operators))
+    if (!isMappedOperator(type))
         throw new Error(`${operator.type} operator is not supported in this time`);
     const subOperator = operator?.child
 
@@ -14,10 +36,10 @@ export function operatorMappers(operator: FindOperator<any>): ExclusiveParameter
         case "not":
             if (subOperator?.type === "isNull")
                 return { _is_null: false }
-            return { [Operators["not"]!]: operator.value }
+            return { _neq: operator.value }
         case "isNull":
             return { _is_null: true }
         default:
-            return { [Operators[type]!]: operator.value }
+            return { [OperatorsMap[type]]: operator.value }
     }
 }

@@ -1,5 +1,4 @@
-import { Not, In, BaseEntity, IsNull, EntityMetadata } from "typeorm"
-
+import { Not, In, BaseEntity, IsNull, EntityMetadata, ArrayContains } from "typeorm"
 import { convertWhereClause } from "./whereClause"
 import { User } from "../../dev-playground/entity";
 import { Where, Filter } from "../types";
@@ -12,6 +11,7 @@ const table = {
     columns: [
         { databaseName: "id", type: 'uuid' },
         { databaseName: "name", type: 'text' },
+        { databaseName: "aliases", type: 'varchar', isArray: true },
         { databaseName: "orgId", type: 'uuid' },
         { databaseName: "testJsonB", type: 'jsonb' }
     ],
@@ -179,6 +179,16 @@ const cases: Case<User>[] = [
     },
     {
         input: {
+            testJsonB: "test"
+        },
+        output: {
+            testJsonB: {
+                _eq: "test"
+            }
+        }
+    },
+    {
+        input: {
             testJsonB: Not({
                 name: "test"
             })
@@ -190,6 +200,16 @@ const cases: Case<User>[] = [
                         name: "test"
                     }
                 }
+            }
+        }
+    },
+    {
+        input: {
+            aliases: ArrayContains(["alias1", "alias2"])
+        },
+        output: {
+            aliases: {
+                _contains: ["alias1", "alias2"]
             }
         }
     }
